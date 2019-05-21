@@ -1,0 +1,25 @@
+{
+  "name": "TAISH",
+  "version": "1.0.0",
+  "description": "",
+  "main": "DButils.js",
+  "dependencies": {
+    "express": "^4.17.0",
+    "tedious-connection-pool": "^1.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EZ6990/TAISH.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EZ6990/TAISH/issues"
+  },
+  "homepage": "https://github.com/EZ6990/TAISH#readme"
+}

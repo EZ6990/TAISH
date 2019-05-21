@@ -44,24 +44,29 @@ app.get('/getSavedPOI', function(req, res){
     const user_data = {
         username: req.body.username,
     };
-    let allpromisess = []
-    allpromisess.push(
         DButilsAzure.execQuery("SELECT poi.id,poi.Name,poi.Rate,poi.Description,poi.Picture FROM FavoritePointsOfInterest fpoi JOIN PointsOfInterest poi ON (poi.Id = fpoi.PointOfInterestId) Where fpoi.UserId = '" + user_data.username + "'")
         .then(function(result){
+                let allpromisess = []
                 for (index = 0; index < result.length; index++) {
                     let row = result[index];
-                    DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['id'])
+                    allpromisess.push(row)
+                    allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['id']))
                 }
+                Promise.all(allpromisess).then(function(data)
+                {
+                    let FavoritePointOfInterest = [];
+                    for (index = 0; index < data.length; index+=2) {
+                        let row = data[index];
+                        row['Categories'] = data[index+1];
+                        FavoritePointOfInterest.push(row)
+                    }
+                    res.send(FavoritePointOfInterest);
+                })
         })
         .catch(function(err){
             console.log("error1 : " + err)
             res.send(err)
         })
-    )
-    Promise.all(allpromisess).then(function(data)
-    {
-        console.log(data);
-    });
 })
 app.put('/insertDefaultPOIOrder', function(req, res){
     // DButilsAzure.execQuery("SELECT PointOfInterestId , Priorety FROM FavoritePointsOfInterest WHERE UserId= "+req.body.username)
