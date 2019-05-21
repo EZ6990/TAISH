@@ -160,6 +160,7 @@ app.get('/getAllCategories', function(req, res){
     })
 })
 
+////////////////DANNY////////////////////////////
 app.put('/insertDefaultPOIOrder', function(req, res){
     // DButilsAzure.execQuery("SELECT PointOfInterestId , Priorety FROM FavoritePointsOfInterest WHERE UserId= "+req.body.username)
     // .then(function(result){
@@ -168,9 +169,9 @@ app.put('/insertDefaultPOIOrder', function(req, res){
     let i=1;
         for(let i=0;i<req.body.POIName.length;i++){
         console.log("here");
-        DButilsAzure.execQuery("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.body.username +"' AND PointOfInterestId= "+req.body.POIName[i])
+        DButilsAzure.execQuery("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.body.username +"' AND PointOfInterestId= "+req.body.POIId[i])
         .then(function(result){
-            console.log("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.body.username +"' AND PointOfInterestId= "+req.body.POIName[i-1]);
+            console.log("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.body.username +"' AND PointOfInterestId= "+req.body.POIId[i-1]);
             i++;
                     })
            
@@ -187,3 +188,86 @@ app.put('/insertDefaultPOIOrder', function(req, res){
     //     res.send(err)
     // })
 });
+
+app.get('/getPOI', function(req, res){
+    DButilsAzure.execQuery("SELECT * FROM PointsOfInterest WHERE Id = "+req.body.POIId)
+    .then(function(result){
+        res.status(200).send(result)
+    })
+    .catch(function(err){
+        console.log(err)
+        res.send(err)
+    })
+
+});
+
+app.post('/insertReview', function(req, res,next){
+    DButilsAzure.execQuery("INSERT INTO Reviews (UserId,PointOfInterestId,Rate,Details) VALUES( '"+req.body.username+"' , '"+ req.body.POIId+"' , '"+req.body.Rate+"' , '"+ req.body.Details +"' )")
+    .then(function(result){
+     //   res.sendStatus(200)
+     next();
+    })
+    .catch(function(err){
+        console.log(err)
+        res.send(err)
+    })
+
+});
+
+app.post('/insertReview', function(req, res){
+    DButilsAzure.execQuery(" select AVG(cast(Rate as decimal(10,2)))/5*100  from Reviews   where PointOfInterestId="+req.body.POIId)
+    .then(function(result){
+      
+        DButilsAzure.execQuery("UPDATE PointsOfInterest set Rate= "+ result[0][""] +" where Id = "+req.body.POIId)
+        .then(function(result){
+             res.sendStatus(200)
+           })
+           .catch(function(err){
+               console.log(err)
+               res.send(err)
+           })
+
+    })
+
+});
+
+app.post('/savePOI', function(req, res){
+    DButilsAzure.execQuery("SELECT MAX(Priorety) FROM FavoritePointsOfInterest WHERE UserId= '" +req.body.username+"'")
+    .then(function(result){
+    let priority=result[0][""]+1;
+    DButilsAzure.execQuery("INSERT INTO FavoritePointsOfInterest (UserId,PointOfInterestId,Priorety) VALUES('"+req.body.username+"', "+ req.body.POIId+" , "+ priority+")")
+    .then(function(result){
+        res.sendStatus(200)
+    })
+    .catch(function(err){
+        console.log(err)
+        res.send(err)
+    })
+})
+.catch(function(err){
+    console.log(err)
+    res.send(err)
+})
+});
+
+app.delete('/removeSavedPOI', function(req, res){
+
+
+    DButilsAzure.execQuery("DECLARE @priorety INT "+
+    "SET @priorety = (SELECT Priorety FROM FavoritePointsOfInterest WHERE UserID = '" +req.body.username
+    +"' AND PointOfInterestId =" +req.body.POIId+") "+
+    "UPDATE FavoritePointsOfInterest SET Priorety = Priorety - 1 WHERE Priorety > @priorety AND UserID = '"+
+    req.body.username+"' DELETE FROM FavoritePointsOfInterest WHERE UserID = '"+
+    req.body.username+"' AND PointOfInterestId = " + req.body.POIId )
+   
+    .then(function(result){
+        res.sendStatus(200)
+    })
+    .catch(function(err){
+        console.log(err)
+        res.send(err)
+    })
+
+});
+
+////////////////DANNY////////////////////////////
