@@ -27,4 +27,15 @@ router.get('/getPOI', function(req, res){
 
 });
 
+router.get('/getAllCategories', function(req, res){
+    DButilsAzure.execQuery("SELECT * FROM Categories")
+    .then(function(result){
+        res.status(200).send(result)
+    })
+    .catch(function(err){
+        console.log(err)
+        res.send(err)
+    })
+})
+
 module.exports = router;
