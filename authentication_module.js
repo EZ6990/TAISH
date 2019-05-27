@@ -51,6 +51,8 @@ router.post('/registerClient', function (req, res) {
     };
     if (user_data.question1 == user_data.question2)
         res.status(400).send("please specify 2 different questions");
+    if (user_data.data.categories.length < 2)
+        res.status(400).send("need at least 2 verifing questions");
 
     DButilsAzure.execQuery("INSERT INTO Users (Username,Password,Firstname,Lastname,City,Country,Email,SecurityQuestion,SecurityAnswer)"
         + " VALUES ('" + user_data.username + "','" + user_data.password + "','" + user_data.firstname + "','" + user_data.lastname + "','" + user_data.city + "'," + user_data.country + ",'" + user_data.email + "','" + user_data.question1 + "','" + user_data.answer1 + "','" + user_data.question1 + "','" + user_data.answer2 + "' )")
