@@ -9,11 +9,11 @@ router.put('/insertDefaultPOIOrder', function(req, res){
     //     res.send(result[1])
     // })
     let i=1;
-        for(let i=0;i<req.body.POIName.length;i++){
+        for(let i=0;i<req.body.POIId.length;i++){
         console.log("here");
-        DButilsAzure.execQuery("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.body.username +"' AND PointOfInterestId= "+req.body.POIId[i])
+        DButilsAzure.execQuery("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.decoded.username+"' AND PointOfInterestId= "+req.body.POIId[i])
         .then(function(result){
-            console.log("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.body.username +"' AND PointOfInterestId= "+req.body.POIId[i-1]);
+            console.log("UPDATE FavoritePointsOfInterest SET Priorety = "+(i+1)+" WHERE UserId= '"+req.deco +"' AND PointOfInterestId= "+req.body.POIId[i-1]);
             i++;
         })
         .catch(function(err) {
@@ -29,7 +29,7 @@ router.put('/insertDefaultPOIOrder', function(req, res){
 });
 
 router.post('/insertReview', function(req, res,next){
-    DButilsAzure.execQuery("INSERT INTO Reviews (UserId,PointOfInterestId,Rate,Details) VALUES( '"+req.body.username+"' , '"+ req.body.POIId+"' , '"+req.body.Rate+"' , '"+ req.body.Details +"' )")
+    DButilsAzure.execQuery("INSERT INTO Reviews (UserId,PointOfInterestId,Rate,Details) VALUES( '"+req.decoded.username+"' , '"+ req.body.POIId+"' , '"+req.body.Rate+"' , '"+ req.body.Details +"' )")
     .then(function(result){
      //   res.sendStatus(200)
      next();
@@ -56,10 +56,10 @@ router.post('/insertReview', function(req, res){
 });
 
 router.post('/savePOI', function(req, res){
-    DButilsAzure.execQuery("SELECT MAX(Priorety) FROM FavoritePointsOfInterest WHERE UserId= '" +req.body.username+"'")
+    DButilsAzure.execQuery("SELECT MAX(Priorety) FROM FavoritePointsOfInterest WHERE UserId= '" +req.decoded.username+"'")
     .then(function(result){
     let priority=result[0][""]+1;
-    DButilsAzure.execQuery("INSERT INTO FavoritePointsOfInterest (UserId,PointOfInterestId,Priorety) VALUES('"+req.body.username+"', "+ req.body.POIId+" , "+ priority+")")
+    DButilsAzure.execQuery("INSERT INTO FavoritePointsOfInterest (UserId,PointOfInterestId,Priorety) VALUES('"+req.decoded.username+"', "+ req.body.POIId+" , "+ priority+")")
     .then(function(result){
         res.sendStatus(200)
     })
@@ -78,11 +78,11 @@ router.delete('/removeSavedPOI', function(req, res){
 
 
     DButilsAzure.execQuery("DECLARE @priorety INT "+
-    "SET @priorety = (SELECT Priorety FROM FavoritePointsOfInterest WHERE UserID = '" +req.body.username
+    "SET @priorety = (SELECT Priorety FROM FavoritePointsOfInterest WHERE UserID = '" +req.decoded.username
     +"' AND PointOfInterestId =" +req.body.POIId+") "+
     "UPDATE FavoritePointsOfInterest SET Priorety = Priorety - 1 WHERE Priorety > @priorety AND UserID = '"+
-    req.body.username+"' DELETE FROM FavoritePointsOfInterest WHERE UserID = '"+
-    req.body.username+"' AND PointOfInterestId = " + req.body.POIId )
+    req.decoded.username+"' DELETE FROM FavoritePointsOfInterest WHERE UserID = '"+
+    req.decoded.username+"' AND PointOfInterestId = " + req.body.POIId )
    
     .then(function(result){
         res.sendStatus(200)
@@ -96,7 +96,7 @@ router.delete('/removeSavedPOI', function(req, res){
 
 router.get('/getReccomendedPOI', function(req, res){
     const user_data = {
-        username: req.body.username,
+        username: req.decoded.username
     };
         DButilsAzure.execQuery("SELECT CategoryId FROM UsersCategories WHERE UserId = '" + user_data.username + "'")
         .then(function(result){
@@ -129,7 +129,7 @@ router.get('/getReccomendedPOI', function(req, res){
 
 router.get('/getSavedPOI', function(req, res){
     const user_data = {
-        username: req.body.username,
+        username: req.decoded.username,
     };
         DButilsAzure.execQuery("SELECT poi.id,poi.Name,poi.Rate,poi.Description,poi.Picture FROM FavoritePointsOfInterest fpoi JOIN PointsOfInterest poi ON (poi.Id = fpoi.PointOfInterestId) Where fpoi.UserId = '" + user_data.username + "' ORDER BY fpoi.Priorety ASC")
         .then(function(result){
