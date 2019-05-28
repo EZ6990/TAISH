@@ -29,7 +29,7 @@ router.put('/insertDefaultPOIOrder', function(req, res){
 });
 
 router.post('/insertReview', function(req, res,next){
-    DButilsAzure.execQuery("INSERT INTO Reviews (UserId,PointOfInterestId,Rate,Details) VALUES( '"+req.decoded.username+"' , '"+ req.body.POIId+"' , '"+req.body.Rate+"' , '"+ req.body.Details +"' )")
+    DButilsAzure.execQuery("INSERT INTO Reviews (UserId,PointOfInterestId,Rate,Details,dateOfReview) VALUES( '"+req.decoded.username+"' , '"+ req.body.POIId+"' , '"+req.body.Rate+"' , '"+ req.body.Details +"' ,  CONVERT(smalldatetime, CURRENT_TIMESTAMP)  )")
     .then(function(result){
      //   res.sendStatus(200)
      next();
@@ -72,7 +72,7 @@ router.post('/savePOI', function(req, res){
     console.log(err)
     res.send(err)
 })
-});
+});         
 
 router.delete('/removeSavedPOI', function(req, res){
 

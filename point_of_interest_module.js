@@ -61,7 +61,7 @@ router.get('/getALLPOI', function (req, res) {
         else {
             s = "SELECT * TOP " + req.params.integer + " FROM Reviews WHERE PointOfInterestId= ";
         }
-        DButilsAzure.execQuery(s + req.params.POIId)
+        DButilsAzure.execQuery(s + req.params.POIId +" ORDER BY dateOfReview")
             .then(function (result) {
                 res.status(200).send(result)
             })
