@@ -3,7 +3,7 @@ var DButilsAzure = require('./DButils');
 var router = express.Router();
 
 router.get('/getCountries', function(req, res){
-    DButilsAzure.execQuery("SELECT * FROM SELECT * FROM Countries")
+    DButilsAzure.execQuery("SELECT * FROM Countries")
     .then(function(result){
         res.status(200).send(result)
     })
@@ -12,3 +12,5 @@ router.get('/getCountries', function(req, res){
         res.send(err)
     })
 })
+
+module.exports = router;

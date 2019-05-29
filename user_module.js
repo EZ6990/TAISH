@@ -128,6 +128,7 @@ router.get('/getReccomendedPOI', function(req, res){
 })
 
 router.get('/getSavedPOI', function(req, res){
+    console.log(req.decoded);
     const user_data = {
         username: req.decoded.username,
     };

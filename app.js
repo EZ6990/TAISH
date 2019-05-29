@@ -1,12 +1,10 @@
 var express = require('express');
-var DButilsAzure = require('./DButils');
 var user_module = require('./user_module');
 var authorization_module = require('./authorization_module');
 var authentication_module = require('./authentication_module');
 var poi_module = require('./point_of_interest_module');
 var countries_module = require('./countries_module');
 
-var secret = "MrRoboto";
 var app = express();
 var port = 3000;
 

@@ -10,7 +10,7 @@ router.get('/getALLPOI', function (req, res) {
             for (index = 0; index < result.length; index++) {
                 let row = result[index];
                 allpromisess.push(row)
-                allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['id']))
+                allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['Id']))
             }
             Promise.all(allpromisess).then(function (data) {
                 let FavoritePointOfInterest = [];
@@ -40,13 +40,16 @@ router.put('/POIViewIncrease', function(req,res){
 })
 
 router.get('/getPOI/:POIId', function (req, res) {
+    console.log("SELECT * FROM PointsOfInterest WHERE Id = " + req.params.POIId);
     DButilsAzure.execQuery("SELECT * FROM PointsOfInterest WHERE Id = " + req.params.POIId)
         .then(function (result) {
             let allpromisess = []
             for (index = 0; index < result.length; index++) {
+                console.log(result[index])
                 let row = result[index];
+                console.log("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['Id']);
                 allpromisess.push(row)
-                allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['id']))
+                allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['Id']))
             }
             Promise.all(allpromisess).then(function (data) {
                 let FavoritePointOfInterest = [];
