@@ -7,6 +7,7 @@ var router = express.Router();
 var secret = "MrRoboto";
 
 router.post("/login", (req, res) => {
+    console.log("walid is HERE");
     const user_data = {
         username: req.body.username,
         password: req.body.password,
