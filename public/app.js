@@ -78,6 +78,7 @@ app.factory('UserService', ['$http', function($http) {
 //-------------------------------------------------------------------------------------------------------------------
 app.config(['$locationProvider', function($locationProvider) {
     $locationProvider.hashPrefix('');
+    $locationProvider.html5Mode(true);
 }]);
 app.config( ['$routeProvider', function($routeProvider) {
     $routeProvider
