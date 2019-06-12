@@ -55,6 +55,20 @@ app.controller('citiesController', ['$http', 'CityModel', function($http, CityMo
         };
     }]);
 //-------------------------------------------------------------------------------------------------------------------
+app.controller('searchController', ['$http', 'PointOfInterestModel',function($http, PointOfInterestModel) {
+    let self = this;
+    self.getPointsOfInterest = function () {
+        $http.get('http://127.0.0.1:3000/public/getALLPOI')
+            .then(function (res) {
+                self.pointsOfInterest = [];
+                angular.forEach(res.data, function (poi) {
+                    self.pointsOfInterest.push(new PointOfInterestModel(poi));
+                });
+            });
+    };
+    self.getPointsOfInterest();
+}]);
+//-------------------------------------------------------------------------------------------------------------------
 app.factory('UserService', ['$http', function($http) {
     let service = {};
     service.isLoggedIn = false;
@@ -97,6 +111,12 @@ app.config( ['$routeProvider', function($routeProvider) {
         .when("/StorageExample", {
             templateUrl : "views/StorageExample.html",
             controller: 'StorageExampleController'
+        })
+        .when("/search", {
+            templateUrl : "views/search.html"
+        })
+        .when("/show/:poiId", {
+            templateUrl : "views/poi.html"
         })
         .otherwise({redirect: '/',
         });

@@ -2,31 +2,48 @@
 <html lang="en" ng-app="myApp">
 <head>
     <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
     <title>My Page</title>
     <script src="angularScripts/angular.js"></script>
     <script src="app.js"></script>
     <script type="text/javascript" src="angularScripts/angular-route.js"></script>
     <script type="text/javascript" src="angularScripts/angular-local-storage.min.js"></script>
-    <script type="text/javascript" src="StorageExampleController.js"></script>
-    <script type="text/javascript" src="CityModel.js"></script>
+    <script src="PointOfInterestModel.js"></script>
     <base href="/">
 </head>
 <body>
     <header><h1>Routing App Example</h1></header>
 
     <div ng-controller="mainController as mainCtrl">
-        <div ng-show="mainCtrl.userService.isLoggedIn" ng-controller="LoggeinController as mainCtrl">
+        <div>
             <a ng-href="/">Home</a>
         </div>
-        <div ng-controller="NotLoggeinController as mainCtrl">
-            <a ng-href="/">Home</a>
-        </div>
-        <div ng-hide="mainCtrl.userService.isLoggedIn" ng-show="mainCtrl.userService.isLoggedIn">
+        <div ng-show="mainCtrl.userService.isLoggedIn">
             <a ng-href="/cities">Cities List</a>
         </div>
+        <div>
+            <span ng-hide="mainCtrl.userService.isLoggedIn">
+                <a ng-href="/login">Login</a>
+            </span>
+        </div>
+        <div>
+            <span>
+                <a ng-href="/search">search</a>
+            </span>
+        </div>
+		 
     </div>
     <br>
     <br>
     <ng-view></ng-view>
+
 </body>
 </html>

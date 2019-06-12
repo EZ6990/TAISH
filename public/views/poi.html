@@ -1,0 +1,14 @@
+
+
+<div class="container" ng-controller="pointOfInterestController as poiCtrl">
+        <div class="form-group">
+            <input ng-model="search.Name" type="text" class="form-control-plaintext">
+            <button ng-click="filterSearch = search">Search</button>
+        </div>
+        <div class="list-group" ng-repeat="poi in searchCtrl.pointsOfInterest | filter : filterSearch">
+            <a ng-herf="/show/{{poi.Id}}" class="list-group-item list-group-item-action">
+                <img ng-src={{poi.Picture}} width="50" height="50" style="display : inline;">
+                <span>{{poi.Name}}</span>
+            </a>
+        </div>
+    </div>
