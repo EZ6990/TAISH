@@ -15,14 +15,21 @@
     <header><h1>Routing App Example</h1></header>
 
     <div ng-controller="mainController as mainCtrl">
-        <div ng-show="mainCtrl.userService.isLoggedIn" ng-controller="LoggeinController as mainCtrl">
+        <div>
             <a ng-href="/">Home</a>
         </div>
-        <div ng-controller="NotLoggeinController as mainCtrl">
-            <a ng-href="/">Home</a>
-        </div>
-        <div ng-hide="mainCtrl.userService.isLoggedIn" ng-show="mainCtrl.userService.isLoggedIn">
+        <div ng-show="mainCtrl.userService.isLoggedIn">
             <a ng-href="/cities">Cities List</a>
+        </div>
+        <div>
+            <span ng-hide="mainCtrl.userService.isLoggedIn">
+                <a ng-href="/login">Login</a>
+            </span>
+        </div>
+        <div>
+            <span>
+                <a ng-href="/StorageExample">Local-Storage</a>
+            </span>
         </div>
     </div>
     <br>
