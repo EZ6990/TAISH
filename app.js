@@ -8,6 +8,7 @@ var countries_module = require('./countries_module');
 var app = express();
 var port = 3000;
 
+
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -15,6 +16,7 @@ app.listen(port, function () {
     console.log('app start listening on port ' + port);
 });
 
+app.use(express.static(__dirname + '/public'));
 
 app.use('/private',authorization_module);
 app.use('/private/user',user_module);
