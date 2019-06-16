@@ -3,25 +3,23 @@
 <div class="container" ng-controller="searchController as searchCtrl">
     <div class="form-group">
         <input ng-model="search.Name" type="text" class="form-control-plaintext">
-        <button ng-click="filterSearch.Name = search.Name">Search</button>
+        <button ng-click="searchCtrl.search(search.Name)">Search</button>
     </div>
     <div class="dropdown">
         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
             Dropdown button
         </button>
         <div class="dropdown-menu">
-            <div class="list-group" ng-repeat="poi in searchCtrl.pointsOfInterest | filter : filterSearch">
-                <div class="list-group" ng-repeat="category in poi.Categories">
-                    <div class="dropdown-item form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" value="">{{category.Name}}
-                        </label>
-                    </div>
+            <div class="dropdown-item form-check">
+                <div class="list-group" ng-repeat="category in searchCtrl.categoriesPossibleFilter">
+                    <label class="form-check-label">
+                        <input checklist-model="categoriesFilter" checklist-value="category" type="checkbox" class="form-check-input">{{category}}
+                    </label>
                 </div>
             </div>
         </div>
     </div>
-    <div class="list-group" ng-repeat="poi in searchCtrl.pointsOfInterest | filter : filterSearch">
+    <div class="list-group" ng-repeat="poi in searchCtrl.searchResults | filter:category ">
         <a ng-herf="/show/{{poi.Id}}" class="list-group-item list-group-item-action">
             <img ng-src={{poi.Picture}} width="50" height="50" style="display : inline;">
             <span>{{poi.Name}}</span>

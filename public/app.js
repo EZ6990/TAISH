@@ -1,7 +1,25 @@
 /**
  * Created by Hasidi on 18/06/2017.
  */
-let app = angular.module('myApp', ['ngRoute', 'LocalStorageModule']);
+let app = angular.module('myApp', ['$rootScope','ngRoute', 'LocalStorageModule']);
+
+app.$rootScope.$watch("categoriesFilter",function (newValue, oldValue, scope){
+    console.log("here");
+})
+app.filter("category",function(){
+    return function(collection){
+        var output = [];
+        console.log(categoriesFilter);
+        angular.forEach(collection,function(pointOfInterest){
+            angular.forEach(pointOfInterest.Categories,function(category){
+                if (self.categoriesFilter.indexOf(category.Name) === -1) {
+                    output.push(pointOfInterest);
+                }
+            })
+        });
+        return output;
+    }
+})
 //-------------------------------------------------------------------------------------------------------------------
 app.config(function (localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('node_angular_App');
@@ -78,8 +96,10 @@ app.controller('citiesController', ['$http', 'CityModel', function ($http, CityM
 }]);
 
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('searchController', ['$http', 'PointOfInterestModel',function($http, PointOfInterestModel) {
+app.controller('searchController', ['$http','PointOfInterestModel','categoryFilter',function($http, PointOfInterestModel) {
     let self = this;
+    self.searchResults = []
+    self.categoriesPossibleFilter = []
     self.getPointsOfInterest = function () {
         $http.get('http://127.0.0.1:3000/public/getALLPOI')
             .then(function (res) {
@@ -89,6 +109,22 @@ app.controller('searchController', ['$http', 'PointOfInterestModel',function($ht
                 });
             });
     };
+    self.search = function(name){
+        self.searchResults = []
+        self.categoriesPossibleFilter = [];
+        angular.forEach(self.pointsOfInterest, function(item) {
+            if (item.Name.includes(name)) {
+                self.searchResults.push(item);
+            }
+        });
+        angular.forEach(self.searchResults, function(pointOfInterest) {
+            angular.forEach(pointOfInterest.Categories,function(category){
+                if (self.categoriesPossibleFilter.indexOf(category.Name) === -1) {
+                    self.categoriesPossibleFilter.push(category.Name);
+                }
+            })
+        });
+    }
     self.getPointsOfInterest();
 }]);
 //-------------------------------------------------------------------------------------------------------------------
