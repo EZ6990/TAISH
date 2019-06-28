@@ -6,6 +6,8 @@ var router = express.Router();
 var secret = "MrRoboto";
 
 router.use("", (req, res,next) => {
+    res.header("Access-Control-Allow-Origin","*");
+	res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
     const token = req.header("x-auth-token");
     // no token
     if (!token) res.status(401).send("Access denied. No token provided.");
