@@ -119,10 +119,17 @@ app.controller('searchController', ['$http','PointOfInterestModel',function($htt
         });
         angular.forEach(self.searchResults, function(pointOfInterest) {
             angular.forEach(pointOfInterest.Categories,function(category){
-                if (self.categoriesPossibleFilter.indexOf(category.Name) === -1) {
+                bAdd = true;
+                console.log(category);
+                angular.forEach(self.categoriesPossibleFilter,function(filterCategory){
+                    console.log(filterCategory);
+                    if (filterCategory.Name == category.Name) {
+                        bAdd = false;
+                    }
+                });
+                if (bAdd)
                     self.categoriesPossibleFilter.push(category);
-                }
-            })
+            });
         });
     }
     self.getPointsOfInterest();
@@ -162,7 +169,6 @@ app.config(['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode(true);
 }]);
 app.config(['$routeProvider', function ($routeProvider) {
-    console.log("ADASDASD");
     $routeProvider
         .when("/", {
             templateUrl: "public/views/home.html",
@@ -177,13 +183,12 @@ app.config(['$routeProvider', function ($routeProvider) {
             controller: 'citiesController'
         })
         .when("/search", {
-            templateUrl : "public/views/search.html"
+            templateUrl : "public/views/search.html",
         })
         .when("/show/:poiId", {
-            templateUrl : "public/views/poi.html"
+            templateUrl : "public/views/poi.html",
         })
         .otherwise({redirect: '/',
         });
-        console.log("ADASDASD2222");
 }]);
 //-------------------------------------------------------------------------------------------------------------------
