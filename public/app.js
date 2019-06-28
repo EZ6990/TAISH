@@ -162,30 +162,28 @@ app.config(['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode(true);
 }]);
 app.config(['$routeProvider', function ($routeProvider) {
+    console.log("ADASDASD");
     $routeProvider
         .when("/", {
-            templateUrl: "views/home.html",
+            templateUrl: "public/views/home.html",
             controller: "mainController"
         })
         .when("/login", {
-            templateUrl: "views/tmplogin.html",
+            templateUrl: "public/views/tmplogin.html",
             controller: "loginController"
         })
         .when("/cities", {
-            templateUrl: "views/cities.html",
+            templateUrl: "public/views/cities.html",
             controller: 'citiesController'
         })
-        .when("/StorageExample", {
-            templateUrl: "views/StorageExample.html",
-            controller: 'StorageExampleController'
-        })
         .when("/search", {
-            templateUrl : "views/search.html"
+            templateUrl : "public/views/search.html"
         })
         .when("/show/:poiId", {
-            templateUrl : "views/poi.html"
+            templateUrl : "public/views/poi.html"
         })
         .otherwise({redirect: '/',
         });
+        console.log("ADASDASD2222");
 }]);
 //-------------------------------------------------------------------------------------------------------------------
