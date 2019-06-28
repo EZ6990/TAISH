@@ -14,13 +14,24 @@ app.controller('mainController', ['UserService', function (UserService) {
     vm.userService = UserService;
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('loginController', ['UserService', '$location', '$window','$scope',
-    function (UserService, $location, $window) {
+app.controller('loginController', ['UserService', '$location', '$window', '$scope',
+    function (UserService, $location, $window, $scope) {
         let self = this;
-        $scope.forgotSection=false;
-        $scope.showHide=function(){
-
-            $scope.showHide=true;
+        $scope.forgotSection = false;
+        self.restoredPass;
+        self.recievedPass;
+      //  $scope.showHide = true;
+      self.getPass=function(){
+    //  $http.get('http://127.0.0.1:3000/public/restorePassword')
+    //     .then(function (res) {
+    //         self.pointsOfInterest = [];
+    //         angular.forEach(res.data, function (poi) {
+    //             self.pointsOfInterest.push(new PointOfInterestModel(poi));
+    //         });
+    //     });
+      }
+        self.showHide = function () {
+            $scope.forgotSection = true;
         }
         self.user = { username: 'admin', password: 'Password1' };
         self.multipleSelect = {
@@ -29,18 +40,18 @@ app.controller('loginController', ['UserService', '$location', '$window','$scope
             q2: "",
             a2: ""
         }
-        self.questions = {
-            q1: "What is the name of your pet?",
-            q2: "What is the name of your favorite teachers name?",
-            q3: "In what city were you born?",
-            q4: "What is the name of your first school?",
-            q5: "Which phone number do you remember most from your childhood?",
-            q6: "What was your favorite place to visit as a child?",
-            q7: "Who is your favorite actor, musician, or artist?",
-            q8: "What is your favorite movie?",
-            q9: "What street did you grow up on?"
-        }
-        self.login = function (valid) {
+        self.questions = [
+            "What is the name of your pet?",
+            "What is the name of your favorite teachers name?",
+            "In what city were you born?",
+            "What is the name of your first school?",
+            "Which phone number do you remember most from your childhood?",
+            "What was your favorite place to visit as a child?",
+            "Who is your favorite actor, musician, or artist?",
+            "What is your favorite movie?",
+            "What street did you grow up on?"
+        ];
+                self.login = function (valid) {
             if (valid) {
                 UserService.login(self.user).then(function (success) {
                     $window.alert('You are logged in');
@@ -79,7 +90,7 @@ app.controller('citiesController', ['$http', 'CityModel', function ($http, CityM
 }]);
 
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('searchController', ['$http','PointOfInterestModel',function($http, PointOfInterestModel) {
+app.controller('searchController', ['$http', 'PointOfInterestModel', function ($http, PointOfInterestModel) {
     let self = this;
     self.searchResults = []
     self.categoriesPossibleFilter = []
@@ -92,18 +103,24 @@ app.controller('searchController', ['$http','PointOfInterestModel',function($htt
                 });
             });
     };
-    self.search = function(name){
+    self.search = function (name) {
         self.searchResults = []
         self.categoriesPossibleFilter = [];
-        angular.forEach(self.pointsOfInterest, function(item) {
+        angular.forEach(self.pointsOfInterest, function (item) {
             if (item.Name.includes(name)) {
                 self.searchResults.push(item);
             }
         });
-        angular.forEach(self.searchResults, function(pointOfInterest) {
-            angular.forEach(pointOfInterest.Categories,function(category){
+        angular.forEach(self.searchResults, function (pointOfInterest) {
+            angular.forEach(pointOfInterest.Categories, function (category) {
                 bAdd = true;
+<<<<<<< HEAD
                 angular.forEach(self.categoriesPossibleFilter,function(filterCategory){
+=======
+                console.log(category);
+                angular.forEach(self.categoriesPossibleFilter, function (filterCategory) {
+                    console.log(filterCategory);
+>>>>>>> abfa30dd3e62995644b1486bd96cc07b33e52e1c
                     if (filterCategory.Name == category.Name) {
                         bAdd = false;
                     }
@@ -126,7 +143,7 @@ app.controller('searchController', ['$http','PointOfInterestModel',function($htt
     };
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.factory('UserService', ['$http', function($http) {
+app.factory('UserService', ['$http', function ($http) {
     let service = {};
     service.isLoggedIn = false;
     service.login = function (user) {
@@ -174,12 +191,13 @@ app.config(['$routeProvider', function ($routeProvider) {
             controller: 'citiesController'
         })
         .when("/search", {
-            templateUrl : "public/views/search.html",
+            templateUrl: "public/views/search.html",
         })
         .when("/show/:poiId", {
-            templateUrl : "public/views/poi.html",
+            templateUrl: "public/views/poi.html",
         })
-        .otherwise({redirect: '/',
+        .otherwise({
+            redirect: '/',
         });
 }]);
 //-------------------------------------------------------------------------------------------------------------------
