@@ -3,23 +3,6 @@
  */
 let app = angular.module('myApp', ['ngRoute', 'LocalStorageModule']);
 
-// app.$rootScope.$watch("categoriesFilter",function (newValue, oldValue, scope){
-//     console.log("here");
-// })
-// app.filter("category",function(){
-//     return function(collection){
-//         var output = [];
-//         console.log(categoriesFilter);
-//         angular.forEach(collection,function(pointOfInterest){
-//             angular.forEach(pointOfInterest.Categories,function(category){
-//                 if (self.categoriesFilter.indexOf(category.Name) === -1) {
-//                     output.push(pointOfInterest);
-//                 }
-//             })
-//         });
-//         return output;
-//     }
-// })
 //-------------------------------------------------------------------------------------------------------------------
 app.config(function (localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('node_angular_App');
@@ -120,19 +103,27 @@ app.controller('searchController', ['$http','PointOfInterestModel',function($htt
         angular.forEach(self.searchResults, function(pointOfInterest) {
             angular.forEach(pointOfInterest.Categories,function(category){
                 bAdd = true;
-                console.log(category);
                 angular.forEach(self.categoriesPossibleFilter,function(filterCategory){
-                    console.log(filterCategory);
                     if (filterCategory.Name == category.Name) {
                         bAdd = false;
                     }
                 });
-                if (bAdd)
+                if (bAdd){
                     self.categoriesPossibleFilter.push(category);
+                    self.categoriesFilter[category.Id] = true;
+                }
             });
         });
     }
     self.getPointsOfInterest();
+    self.filterByCategory = function () {
+        return function (pointOfInterest) {
+            angular.forEach(pointOfInterest.Categories,function(category){
+                if(self.categoriesFilter[category.Id])
+                    return true;
+            });
+        };
+    };
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 app.factory('UserService', ['$http', function($http) {

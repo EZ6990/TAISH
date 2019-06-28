@@ -13,13 +13,13 @@
             <div class="dropdown-item form-check">
                 <div class="list-group" ng-repeat="category in searchCtrl.categoriesPossibleFilter">
                     <label class="form-check-label">
-                        <input checklist-model="searchCtrl.categoriesFilter.Categories" checklist-value="category" type="checkbox" class="form-check-input">{{category.Name}}
+                        <input ng-model="searchCtrl.categoriesFilter[{{category.Id}}]" type="checkbox" class="form-check-input">{{category.Name}}
                     </label>
                 </div>
             </div>
         </div>
     </div>
-    <div class="list-group" ng-repeat="poi in searchCtrl.searchResults | filter:poi.category ">
+    <div class="list-group" ng-repeat="poi in searchCtrl.searchResults | filter : searchCtrl.filterByCategory()">
         <a ng-herf="/show/{{poi.Id}}" class="list-group-item list-group-item-action">
             <img ng-src={{poi.Picture}} width="50" height="50" style="display : inline;">
             <span>{{poi.Name}}</span>
