@@ -35,6 +35,11 @@
             </span>
         </div>
         <div>
+            <span ng-hide="mainCtrl.userService.isLoggedIn">
+                <a ng-href="/register">register</a>
+            </span>
+        </div>
+        <div>
             <span>
                 <a ng-href="/search">search</a>
             </span>

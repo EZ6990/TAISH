@@ -1,0 +1,78 @@
+<div class="login-container" ng-controller="registerController as regCtrl">
+    <div class="Content" id="Register">
+        <div class="container">
+            <div class="card">
+                <div class="card-header mb-3">
+                    <div class="card-title">
+                        <h2 class="text-center">Register</h2>
+                    </div>
+                </div>
+                <form id="register_form">
+                    <div class="card-content px-3 mb-3">
+                        <div class="input-group mb-3">
+                            <div class="my-error-input">
+                                <input class="mx-2" type="text" placeholder="Username" id="runame" name="username"
+                                    ng-model="regCtrl.username">
+                            </div>
+                            <div class="my-error-input">
+                                <input class="mx-2" type="password" placeholder="******" id="rpsw" name="password"
+                                    ng-model="regCtrl.password">
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="my-error-input">
+                                <input class="mx-2" type="text" placeholder="First Name" id="rfn" name="firstname"
+                                    ng-model="regCtrl.firstname">
+                            </div>
+                            <div class="my-error-input">
+                                <input class="mx-2" type="text" placeholder="Last Name" id="rln" name="lastname"
+                                    ng-model="regCtrl.lastname">
+                            </div>
+                            <div class="my-error-input">
+                                <input class="mx-2" type="text" placeholder="city" id="rc" name="city"
+                                    ng-model="regCtrl.city">
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <select name="questionSelect" id="rcitySelect" ng-model="regCtrl.country">
+                                <option value="">--Please select a country--</option>
+                                <!-- not selected / blank option -->
+                                <option ng-repeat="c in regCtrl.countries" value="{{c.Id}}">{{c.Name}}</option> <!-- interpolation -->
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="my-error-input" style="width: 100%;padding-right: 15px;">
+                                <input class="mx-2 form-control" type="email" placeholder="Email" id="remail"
+                                    name="email">
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            first question
+                            <select name="questionSelect" id="rfquestionSelect" ng-model=regCtrl.question1>
+                                <option value="">--Please select a question--</option>
+                                <!-- not selected / blank option -->
+                                <option ng-repeat="q in regCtrl.questions">{{q}}</option> <!-- interpolation -->
+                            </select>
+                            <input type="text" placeholder="firstAnswer" id="rfirstAnswer" ng-model="regCtrl.answer1"
+                                ng-required="true" class="form-control" name="firstAnswerInput">
+                        </div>
+                        <div class="input-group mb-3">
+                            second question
+                            <select name="questionSelect" id="rsquestionSelect" ng-model="regCtrl.question2">
+                                <option value="">--Please select a question--</option>
+                                <!-- not selected / blank option -->
+                                <option ng-repeat="q in regCtrl.questions">{{q}}</option> <!-- interpolation -->
+                            </select>
+                            <input type="text" placeholder="secondAnswer" id="rsecondAnswer" ng-model="regCtrl.answer2"
+                                ng-required="true" class="form-control" name="secondAnswerInput">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <button type="button" class="btn btn-primary btn-block" onclick="register()">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

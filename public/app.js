@@ -14,22 +14,76 @@ app.controller('mainController', ['UserService', function (UserService) {
     vm.userService = UserService;
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('loginController', ['UserService', '$location', '$window', '$scope',
-    function (UserService, $location, $window, $scope) {
+
+app.controller('registerController', ['questionServirce', '$http',
+    function (questionServirce, $http) {
+        let self = this;
+        let basicUrl = 'http://127.0.0.1:3000/public/';
+        self.questions = questionServirce.questions;
+        let cUrl = basicUrl+'getCountries';
+        let rcURL=basicUrl+'registerClient';
+        $http.get(cUrl).then(function (response) {
+        self.countries=response.data;
+        console.log(self.countries);            
+        },
+        function(error){
+            console.log("trouble uploading countries")
+        });
+        self.getPass = function () {
+            var req = {
+                method: 'POST',
+                url: rcURL,
+                data: {
+                    username: self.username,
+                    password: self.password,
+                    firstname: self.firstname,
+                    lastname: self.lastname,
+                    city: self.city,
+                    country: self.country,
+                    email: self.email,
+                    question1: self.question1,
+                    answer1: self.answer1,
+                    question2: self.question2,
+                    answer2: self.answer2,
+                    categories: self.categories
+                }
+            }
+            $http(req).then(function (result) {
+                console.log(result)
+            }).catch(function (err) {
+                console.log(nope)
+                res.send(err)
+            })
+        }
+    }])
+//-------------------------------------------------------------------------------------------------------------------
+app.controller('loginController', ['UserService', 'questionServirce', '$location', '$window', '$scope',
+    function (UserService, questionServirce, $location, $window, $scope) {
+        console.log("asfd");
         let self = this;
         $scope.forgotSection = false;
-        self.restoredPass;
-        self.recievedPass;
-      //  $scope.showHide = true;
-      self.getPass=function(){
-    //  $http.get('http://127.0.0.1:3000/public/restorePassword')
-    //     .then(function (res) {
-    //         self.pointsOfInterest = [];
-    //         angular.forEach(res.data, function (poi) {
-    //             self.pointsOfInterest.push(new PointOfInterestModel(poi));
-    //         });
-    //     });
-      }
+        // self.restoredPass;
+        // self.recievedPass;
+        //  $scope.showHide = true;
+        self.getPass = function () {
+            var req = {
+                method: 'POST',
+                url: 'http://127.0.0.1:3000/public/restorePassword',
+                data: {
+                    username: self.user.username,
+                    question1: self.firstQuestion,
+                    answer1: self.firstAnswer,
+                    question2: self.secondQuestion,
+                    answer2: self.secondAnswer
+                }
+            }
+            $http(req).then(function (result) {
+                console.log(result)
+            }).catch(function (err) {
+                console.log(nope)
+                res.send(err)
+            })
+        }
         self.showHide = function () {
             $scope.forgotSection = true;
         }
@@ -40,18 +94,8 @@ app.controller('loginController', ['UserService', '$location', '$window', '$scop
             q2: "",
             a2: ""
         }
-        self.questions = [
-            "What is the name of your pet?",
-            "What is the name of your favorite teachers name?",
-            "In what city were you born?",
-            "What is the name of your first school?",
-            "Which phone number do you remember most from your childhood?",
-            "What was your favorite place to visit as a child?",
-            "Who is your favorite actor, musician, or artist?",
-            "What is your favorite movie?",
-            "What street did you grow up on?"
-        ];
-                self.login = function (valid) {
+        self.questions = questionServirce.questions;
+        self.login = function (valid) {
             if (valid) {
                 UserService.login(self.user).then(function (success) {
                     $window.alert('You are logged in');
@@ -63,6 +107,7 @@ app.controller('loginController', ['UserService', '$location', '$window', '$scop
             }
         };
     }]);
+
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('citiesController', ['$http', 'CityModel', function ($http, CityModel) {
     let self = this;
@@ -110,33 +155,32 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
             if (item.Name.includes(name)) {
                 self.searchResults.push(item);
             }
+
         });
-        angular.forEach(self.searchResults, function (pointOfInterest) {
-            angular.forEach(pointOfInterest.Categories, function (category) {
-                bAdd = true;
-<<<<<<< HEAD
-                angular.forEach(self.categoriesPossibleFilter,function(filterCategory){
-=======
+    }
+    angular.forEach(self.searchResults, function (pointOfInterest) {
+        angular.forEach(pointOfInterest.Categories, function (category) {
+            bAdd = true;
+            angular.forEach(self.categoriesPossibleFilter, function (filterCategory) {
                 console.log(category);
                 angular.forEach(self.categoriesPossibleFilter, function (filterCategory) {
                     console.log(filterCategory);
->>>>>>> abfa30dd3e62995644b1486bd96cc07b33e52e1c
                     if (filterCategory.Name == category.Name) {
                         bAdd = false;
                     }
                 });
-                if (bAdd){
+                if (bAdd) {
                     self.categoriesPossibleFilter.push(category);
                     self.categoriesFilter[category.Id] = true;
                 }
             });
         });
-    }
+    });
     self.getPointsOfInterest();
     self.filterByCategory = function () {
         return function (pointOfInterest) {
-            angular.forEach(pointOfInterest.Categories,function(category){
-                if(self.categoriesFilter[category.Id])
+            angular.forEach(pointOfInterest.Categories, function (category) {
+                if (self.categoriesFilter[category.Id])
                     return true;
             });
         };
@@ -172,6 +216,25 @@ app.factory('UserService', ['$http', function ($http) {
     return service;
 }]);
 //-------------------------------------------------------------------------------------------------------------------
+app.service('questionServirce', function () {
+    this.questions = [
+        "What is the name of your pet?",
+        "What is the name of your favorite teachers name?",
+        "In what city were you born?",
+        "What is the name of your first school?",
+        "Which phone number do you remember most from your childhood?",
+        "What was your favorite place to visit as a child?",
+        "Who is your favorite actor, musician, or artist?",
+        "What is your favorite movie?",
+        "What street did you grow up on?"
+    ];
+
+    this.getQuestions = function () {
+        return this.questions;
+    }
+
+});
+//-------------------------------------------------------------------------------------------------------------------
 app.config(['$locationProvider', function ($locationProvider) {
     $locationProvider.hashPrefix('');
     $locationProvider.html5Mode(true);
@@ -184,11 +247,12 @@ app.config(['$routeProvider', function ($routeProvider) {
         })
         .when("/login", {
             templateUrl: "public/views/tmplogin.html",
-            controller: "loginController"
         })
         .when("/cities", {
             templateUrl: "public/views/cities.html",
-            controller: 'citiesController'
+        })
+        .when("/register", {
+            templateUrl: "public/views/register.html",
         })
         .when("/search", {
             templateUrl: "public/views/search.html",

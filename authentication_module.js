@@ -46,7 +46,7 @@ router.post('/restorePassword', function (req, res) {
     DButilsAzure.execQuery("SELECT Password FROM Users where Username = '" + user_data.username + "' and SecurityQuestion1 = '" + user_data.question1 + "' and SecurityAnswer1 = '" + user_data.answer1 + "'"
     + " and SecurityQuestion2 = '" + user_data.question2 + "' and SecurityAnswer2 = '" + user_data.answer2 + "'")
         .then(function (result) {
-            res.status(401).send(result)
+            res.status(200).send(result)
         })
         .catch(function (err) {
             console.log(err)
