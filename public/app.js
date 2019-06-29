@@ -19,41 +19,57 @@ app.controller('registerController', ['questionServirce', '$http',
     function (questionServirce, $http) {
         let self = this;
         let basicUrl = 'http://127.0.0.1:3000/public/';
+        let cUrl = basicUrl + 'getCountries';
+        let rcURL = basicUrl + 'registerClient';
+        let catUrl = basicUrl + 'getAllCategories';
         self.questions = questionServirce.questions;
-        let cUrl = basicUrl+'getCountries';
-        let rcURL=basicUrl+'registerClient';
-        $http.get(cUrl).then(function (response) {
-        self.countries=response.data;
-        console.log(self.countries);            
+        self.chosenCats = [];
+        $http.get(catUrl).then(function (response) {
+
+            self.categories = response.data;
+            return self.categories;
+            console.log(self.categories);
         },
-        function(error){
-            console.log("trouble uploading countries")
-        });
-        self.getPass = function () {
-            var req = {
-                method: 'POST',
-                url: rcURL,
-                data: {
-                    username: self.username,
-                    password: self.password,
-                    firstname: self.firstname,
-                    lastname: self.lastname,
-                    city: self.city,
-                    country: self.country,
-                    email: self.email,
-                    question1: self.question1,
-                    answer1: self.answer1,
-                    question2: self.question2,
-                    answer2: self.answer2,
-                    categories: self.categories
-                }
-            }
-            $http(req).then(function (result) {
-                console.log(result)
-            }).catch(function (err) {
-                console.log(nope)
-                res.send(err)
-            })
+            function (error) {
+                console.log("trouble uploading categories")
+            });
+
+
+
+        $http.get(cUrl).then(function (response) {
+            self.countries = response.data;
+        },
+            function (error) {
+                console.log("trouble uploading countries")
+            });
+
+
+        self.registerNewUser = function () {
+            console.log(self.chosenCats);
+            // var req = {
+            //     method: 'POST',
+            //     url: rcURL,
+            //     data: {
+            //         username: self.username,
+            //         password: self.password,
+            //         firstname: self.firstname,
+            //         lastname: self.lastname,
+            //         city: self.city,
+            //         country: self.country,
+            //         email: self.email,
+            //         question1: self.question1,
+            //         answer1: self.answer1,
+            //         question2: self.question2,
+            //         answer2: self.answer2,
+            //         categories: self.categories
+            //     }
+            // }
+            // $http(req).then(function (result) {
+            //     console.log(result)
+            // }).catch(function (err) {
+            //     console.log(nope)
+            //     res.send(err)
+            // })
         }
     }])
 //-------------------------------------------------------------------------------------------------------------------

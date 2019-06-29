@@ -4,6 +4,7 @@
   "description": "",
   "main": "DButils.js",
   "dependencies": {
+    "checklist-model": "^1.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "json": "^9.0.6",

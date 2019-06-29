@@ -37,7 +37,8 @@
                             <select name="questionSelect" id="rcitySelect" ng-model="regCtrl.country">
                                 <option value="">--Please select a country--</option>
                                 <!-- not selected / blank option -->
-                                <option ng-repeat="c in regCtrl.countries" value="{{c.Id}}">{{c.Name}}</option> <!-- interpolation -->
+                                <option ng-repeat="c in regCtrl.countries" value="{{c.Id}}">{{c.Name}}</option>
+                                <!-- interpolation -->
                             </select>
                         </div>
                         <div class="input-group mb-3">
@@ -66,9 +67,15 @@
                             <input type="text" placeholder="secondAnswer" id="rsecondAnswer" ng-model="regCtrl.answer2"
                                 ng-required="true" class="form-control" name="secondAnswerInput">
                         </div>
-
                         <div class="input-group mb-3">
-                            <button type="button" class="btn btn-primary btn-block" onclick="register()">Submit</button>
+                            Choose atleast two categories
+                            <label class="input-group mb-3" ng-repeat="cat in regCtrl.categories">
+                                <input type="checkbox" checklist-model="regCtrl.chosenCats" checklist-value="cat.Id">
+                                {{cat.Name}}
+                            </label>
+                        </div>
+                        <div class="input-group mb-3">
+                            <button type="button" class="btn btn-primary btn-block" ng-click="regCtrl.registerNewUser()">Submit</button>
                         </div>
                     </div>
                 </form>
