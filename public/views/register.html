@@ -43,7 +43,7 @@
                         </div>
                         <div class="input-group mb-3">
                             <div class="my-error-input" style="width: 100%;padding-right: 15px;">
-                                <input class="mx-2 form-control" type="email" placeholder="Email" id="remail"
+                                <input class="mx-2 form-control" type="email" placeholder="Email" id="remail" ng-model=regCtrl.email
                                     name="email">
                             </div>
                         </div>
@@ -68,14 +68,20 @@
                                 ng-required="true" class="form-control" name="secondAnswerInput">
                         </div>
                         <div class="input-group mb-3">
-                            Choose atleast two categories
-                            <label class="input-group mb-3" ng-repeat="cat in regCtrl.categories">
-                                <input type="checkbox" checklist-model="regCtrl.chosenCats" checklist-value="cat.Id">
-                                {{cat.Name}}
-                            </label>
+                            Choose at least two categories
+                            <!-- <label class="input-group mb-3" >-->
+                            <div class="dropdown-item form-check">
+                                <label class="form-check-label">
+                                    <div class="list-group" ng-repeat="cat in regCtrl.categories">
+                                        <input ng-model="regCtrl.chosenCats[cat.Id]" type="checkbox"
+                                            class="form-check-input">{{cat.Name}}
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                         <div class="input-group mb-3">
-                            <button type="button" class="btn btn-primary btn-block" ng-click="regCtrl.registerNewUser()">Submit</button>
+                            <button type="button" class="btn btn-primary btn-block"
+                                ng-click="regCtrl.registerNewUser()">Submit</button>
                         </div>
                     </div>
                 </form>

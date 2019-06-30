@@ -24,11 +24,9 @@ app.controller('registerController', ['questionServirce', '$http',
         let catUrl = basicUrl + 'getAllCategories';
         self.questions = questionServirce.questions;
         self.chosenCats = [];
+        self.sendCat = [];
         $http.get(catUrl).then(function (response) {
-
             self.categories = response.data;
-            return self.categories;
-            console.log(self.categories);
         },
             function (error) {
                 console.log("trouble uploading categories")
@@ -45,36 +43,44 @@ app.controller('registerController', ['questionServirce', '$http',
 
 
         self.registerNewUser = function () {
-            console.log(self.chosenCats);
-            // var req = {
-            //     method: 'POST',
-            //     url: rcURL,
-            //     data: {
-            //         username: self.username,
-            //         password: self.password,
-            //         firstname: self.firstname,
-            //         lastname: self.lastname,
-            //         city: self.city,
-            //         country: self.country,
-            //         email: self.email,
-            //         question1: self.question1,
-            //         answer1: self.answer1,
-            //         question2: self.question2,
-            //         answer2: self.answer2,
-            //         categories: self.categories
-            //     }
-            // }
-            // $http(req).then(function (result) {
-            //     console.log(result)
-            // }).catch(function (err) {
-            //     console.log(nope)
-            //     res.send(err)
-            // })
+            angular.forEach(self.chosenCats, function (value, key) {
+                if (value == true)
+                    self.sendCat.push(key);
+            });
+           // console.log(self.sendCat);
+           
+            var req = {
+                method: 'POST',
+                url: rcURL,
+                data: {
+                    username: self.username,
+                    password: self.password,
+                    firstname: self.firstname,
+                    lastname: self.lastname,
+                    city: self.city,
+                    country: parseInt(self.country),
+                    email: self.email,
+                    question1: self.question1,
+                    answer1: self.answer1,
+                    question2: self.question2,
+                    answer2: self.answer2,
+                    categories: self.sendCat
+                }
+            }
+            $http(req).then(function (result) {
+                console.log(result)
+                self.sendCat=[];
+            }).catch(function (err) {
+                console.log(err);
+                console.log("---------------------")
+                return Promise.reject(err);
+                
+            })
         }
     }])
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('loginController', ['UserService', 'questionServirce', '$location', '$window', '$scope',
-    function (UserService, questionServirce, $location, $window, $scope) {
+app.controller('loginController', ['UserService', 'questionServirce', '$location', '$window', '$scope','$http',
+    function (UserService, questionServirce, $location, $window, $scope,$http) {
         console.log("asfd");
         let self = this;
         $scope.forgotSection = false;
@@ -94,7 +100,8 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
                 }
             }
             $http(req).then(function (result) {
-                console.log(result)
+               self.recievedPasst=true;
+               self.restoredPass=result.data;
             }).catch(function (err) {
                 console.log(nope)
                 res.send(err)
@@ -102,13 +109,6 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
         }
         self.showHide = function () {
             $scope.forgotSection = true;
-        }
-        self.user = { username: 'admin', password: 'Password1' };
-        self.multipleSelect = {
-            q1: "",
-            a1: "",
-            q2: "",
-            a2: ""
         }
         self.questions = questionServirce.questions;
         self.login = function (valid) {
@@ -192,17 +192,17 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
         console.log(self.searchResults);
     }
     self.filterByCategory = function (pointOfInterest) {
-            console.log(pointOfInterest.Name + ":" + pointOfInterest.Rate);
-            for (i = 0; i < pointOfInterest.Categories.length; i++){
-                var category = pointOfInterest.Categories[i];
-                if(self.categoriesFilter[category.Id] == true){
-                    return pointOfInterest;
-                }
-                return false;
-            };
+        console.log(pointOfInterest.Name + ":" + pointOfInterest.Rate);
+        for (i = 0; i < pointOfInterest.Categories.length; i++) {
+            var category = pointOfInterest.Categories[i];
+            if (self.categoriesFilter[category.Id] == true) {
+                return pointOfInterest;
+            }
+            return false;
+        };
     };
     self.getPointsOfInterest();
-    
+
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 app.factory('UserService', ['$http', function ($http) {
@@ -225,7 +225,7 @@ app.factory('UserService', ['$http', function ($http) {
                 'user': user.username
             };
             service.isLoggedIn = true;
-            console.log("resolving");
+            console.log(token);
             return Promise.resolve(response);
         }, function (error) {
             return Promise.reject(e);

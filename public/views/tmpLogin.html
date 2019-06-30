@@ -24,7 +24,7 @@
                     </div>
                     <div class="input-group">
                         <button type="button" class="btn btn-primary btn-block"
-                            ng-click="loginCtrl.login(loginCtrl.user)" ng-disabled="loginForm.$invalid">Login</button>
+                            ng-click="loginCtrl.login(loginCtrl.user)" >Login</button>
 
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                     <div class="input-group">
                         <button type="button" class="btn btn-primary btn-block" ng-click="loginCtrl.getPass()">Get
                             Password</button>
-                        <label ng-show="recievedPass">your password is {{restoredPass}} </label>
+                        <p ng-bind="loginCtrl.restoredPass[0].Password"></p>
                     </div>
                 </div>
 

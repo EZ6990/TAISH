@@ -2,9 +2,9 @@ var express = require('express');
 var DButilsAzure = require('./DButils');
 var router = express.Router();
 
-router.use("/",(req,res,next) => {
-    res.header("Access-Control-Allow-Origin","*");
-    res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
+router.use("/", (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
@@ -33,15 +33,15 @@ router.get('/getALLPOI', function (req, res) {
         })
 });
 
-router.put('/POIViewIncrease', function(req,res){
+router.put('/POIViewIncrease', function (req, res) {
     DButilsAzure.execQuery("UPDATE PointsOfInterest SET point_viewed = point_viewed + 1 WHERE Id= " + req.body.POIId)
-    .then(function (result) {
-        res.sendStatus(200)
-    })
-    .catch(function (err) {
-        console.log(err)
-        res.send(err)
-    })
+        .then(function (result) {
+            res.sendStatus(200)
+        })
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
 })
 
 router.get('/getPOI/:POIId', function (req, res) {
@@ -87,18 +87,17 @@ router.get('/getPOIReviews/:POIId/:integer', function (req, res) {
             console.log(err)
             res.send(err)
         })
+});
 
-    router.get('/getAllCategories', function (req, res) {
-        DButilsAzure.execQuery("SELECT * FROM Categories")
-            .then(function (result) {
-                res.status(200).send(result)
-            })
-            .catch(function (err) {
-                console.log(err)
-                res.send(err)
-            })
-    })
+router.get('/getAllCategories', function (req, res) {
+    DButilsAzure.execQuery("SELECT * FROM Categories")
+        .then(function (result) {
+            res.status(200).send(result)
+        })
+        .catch(function (err) {
+            console.log(err)
+            res.send(err)
+        })
+});
 
-    module.exports = router;
-})
 module.exports = router;
