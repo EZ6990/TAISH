@@ -94,6 +94,7 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
     let self = this;
     self.searchResults = []
     self.categoriesPossibleFilter = []
+    self.categoriesFilter = []
     self.getPointsOfInterest = function () {
         $http.get('http://127.0.0.1:3000/public/getALLPOI')
             .then(function (res) {
@@ -104,7 +105,7 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
             });
     };
     self.search = function (name) {
-        self.searchResults = []
+        self.searchResults = [];
         self.categoriesPossibleFilter = [];
         angular.forEach(self.pointsOfInterest, function (item) {
             if (item.Name.includes(name)) {
@@ -114,13 +115,8 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
         angular.forEach(self.searchResults, function (pointOfInterest) {
             angular.forEach(pointOfInterest.Categories, function (category) {
                 bAdd = true;
-<<<<<<< HEAD
-                angular.forEach(self.categoriesPossibleFilter,function(filterCategory){
-=======
-                console.log(category);
                 angular.forEach(self.categoriesPossibleFilter, function (filterCategory) {
                     console.log(filterCategory);
->>>>>>> abfa30dd3e62995644b1486bd96cc07b33e52e1c
                     if (filterCategory.Name == category.Name) {
                         bAdd = false;
                     }
@@ -131,16 +127,20 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
                 }
             });
         });
+        console.log(self.searchResults);
     }
-    self.getPointsOfInterest();
-    self.filterByCategory = function () {
-        return function (pointOfInterest) {
-            angular.forEach(pointOfInterest.Categories,function(category){
-                if(self.categoriesFilter[category.Id])
-                    return true;
-            });
-        };
+    self.filterByCategory = function (pointOfInterest) {
+            console.log(pointOfInterest.Name + ":" + pointOfInterest.Rate);
+            for (i = 0; i < pointOfInterest.Categories.length; i++){
+                var category = pointOfInterest.Categories[i];
+                if(self.categoriesFilter[category.Id] == true){
+                    return pointOfInterest;
+                }
+                return false;
+            };
     };
+    self.getPointsOfInterest();
+    
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 app.factory('UserService', ['$http', function ($http) {
