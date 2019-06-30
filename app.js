@@ -10,9 +10,11 @@ var port = 3000;
 
 
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: false }));
+
 
 app.listen(port, function () {
+
     console.log('app start listening on port ' + port);
 });
 
