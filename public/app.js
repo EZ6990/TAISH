@@ -84,6 +84,7 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
         console.log("asfd");
         let self = this;
         $scope.forgotSection = false;
+        self.user2={username:"Dannyko", password:"123456"};
         // self.restoredPass;
         // self.recievedPass;
         //  $scope.showHide = true;
@@ -113,7 +114,7 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
         self.questions = questionServirce.questions;
         self.login = function (valid) {
             if (valid) {
-                UserService.login(self.user).then(function (success) {
+                UserService.login(self.user2).then(function (success) {
                     $window.alert('You are logged in');
                     $location.path('/');
                 }).catch(function (error) {
@@ -191,11 +192,11 @@ app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('favoriteController', ['UserService',function(UserService){
-
-
-
-    
+app.controller('favoriteController', ['UserService', function (UserService) {
+    let self = this;
+    self.favPOI = UserService.getFavorites().then(function (response){
+    console.log(self.favPOI);
+    });
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
@@ -245,7 +246,7 @@ app.controller('searchController', ['PointOfInterestService', function (PointOfI
     };
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.factory('UserService', ['$http', function ($http) {
+app.factory('UserService', ['$http','$window', function ($http,$window) {
     let service = {};
 
     let self = this;
@@ -264,12 +265,12 @@ app.factory('UserService', ['$http', function ($http) {
             data: data
         }).then(function (response) {
             let token = response.data;
+            $window.sessionStorage.setItem('token',token);
             $http.defaults.headers.common = {
                 'x-auth-token': token,
                 'user': user.username
             };
             service.isLoggedIn = true;
-            console.log(token);
             return Promise.resolve(response);
         }, function (error) {
             return Promise.reject(e);
@@ -277,20 +278,19 @@ app.factory('UserService', ['$http', function ($http) {
     };
     service.getFavorites = function () {
         if (service.isLoggedIn) {
-            console.log("gonnaPost");
             return $http({
-                method: 'POST',
-                url: 'http://127.0.0.1:3000/private/getSavedPOI',
-                data: $http.defaults.headers.common.x - auth - token
+                method: 'GET',
+                url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
+               headers:{'x-auth-token': $window.sessionStorage.getItem('token')}
             })
-            .then(function (response) {
-                self.pointsOfInterest = [];
-                angular.forEach(res.data, function (poi) {
-                    self.pointsOfInterest.push(new PointOfInterestModel(poi));
-                });
-                console.log("Posted");
-                return self.pointsOfInterest;
-            })
+                .then(function (response) {
+                    self.pointsOfInterest = [];
+                    angular.forEach(res.data, function (poi) {
+                        self.pointsOfInterest.push(new PointOfInterestModel(poi));
+                    });
+                    console.log("Posted");
+                    return self.pointsOfInterest;
+                })
         }
     };
     return service;
