@@ -39,6 +39,11 @@
             </span>
         </div>
         <div>
+            <span ng-hide="mainCtrl.userService.isLoggedIn">
+                <a ng-href="/favorites">favorites</a>
+            </span>
+        </div>
+        <div>
             <span>
                 <a ng-href="/search">search</a>
             </span>

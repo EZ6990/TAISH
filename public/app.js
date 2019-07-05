@@ -47,8 +47,8 @@ app.controller('registerController', ['questionServirce', '$http',
                 if (value == true)
                     self.sendCat.push(key);
             });
-           // console.log(self.sendCat);
-           
+            // console.log(self.sendCat);
+
             var req = {
                 method: 'POST',
                 url: rcURL,
@@ -69,18 +69,18 @@ app.controller('registerController', ['questionServirce', '$http',
             }
             $http(req).then(function (result) {
                 console.log(result)
-                self.sendCat=[];
+                self.sendCat = [];
             }).catch(function (err) {
                 console.log(err);
                 console.log("---------------------")
                 return Promise.reject(err);
-                
+
             })
         }
     }])
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('loginController', ['UserService', 'questionServirce', '$location', '$window', '$scope','$http',
-    function (UserService, questionServirce, $location, $window, $scope,$http) {
+app.controller('loginController', ['UserService', 'questionServirce', '$location', '$window', '$scope', '$http',
+    function (UserService, questionServirce, $location, $window, $scope, $http) {
         console.log("asfd");
         let self = this;
         $scope.forgotSection = false;
@@ -100,8 +100,8 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
                 }
             }
             $http(req).then(function (result) {
-               self.recievedPasst=true;
-               self.restoredPass=result.data;
+                self.recievedPasst = true;
+                self.restoredPass = result.data;
             }).catch(function (err) {
                 console.log(nope)
                 res.send(err)
@@ -149,21 +149,21 @@ app.controller('citiesController', ['$http', 'CityModel', function ($http, CityM
         }
     };
 }]);
-
-app.controller('pointOfInterestController', ['$http','$routeParams','$rootScope','PointOfInterestService', function ($http,$routeParams,$rootScope,PointOfInterestService) {
+//-------------------------------------------------------------------------------------------------------------------
+app.controller('pointOfInterestController', ['$http', '$routeParams', '$rootScope', 'PointOfInterestService', function ($http, $routeParams, $rootScope, PointOfInterestService) {
     let self = this;
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
-    .then(function(poi){
-        self.pointOfInterest = poi;
-    });
+        .then(function (poi) {
+            self.pointOfInterest = poi;
+        });
 }]);
-
-app.service('PointOfInterestService',['$http','PointOfInterestModel', function($http,PointOfInterestModel) {
+//-------------------------------------------------------------------------------------------------------------------
+app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function ($http, PointOfInterestModel) {
     let self = this;
     self.pointsOfInterest = [];
 
-    self.getPointsOfInterest = function () { 
-        if (self.pointsOfInterest.length == 0){
+    self.getPointsOfInterest = function () {
+        if (self.pointsOfInterest.length == 0) {
             return $http.get('http://127.0.0.1:3000/public/getALLPOI')
                 .then(function (res) {
                     self.pointsOfInterest = [];
@@ -173,22 +173,31 @@ app.service('PointOfInterestService',['$http','PointOfInterestModel', function($
                     return self.pointsOfInterest;
                 });
         }
-        else{
+        else {
             return Promise.resolve(self.pointsOfInterest);
         }
     };
     self.getPointOfInterestById = function (poiId) {
         return self.getPointsOfInterest()
-        .then(function(pois){
-            for (let i = 0; i < pois.length; i++){
-                let poi = pois[i];
-                if (poi.Id == poiId)
-                    return poi;
-            }
-        })
+            .then(function (pois) {
+                for (let i = 0; i < pois.length; i++) {
+                    let poi = pois[i];
+                    if (poi.Id == poiId)
+                        return poi;
+                }
+            })
     };
-  }]);
 
+
+}]);
+//-------------------------------------------------------------------------------------------------------------------
+app.controller('favoriteController', ['UserService',function(UserService){
+
+
+
+    
+
+}]);
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('searchController', ['PointOfInterestService', function (PointOfInterestService) {
     let self = this;
@@ -197,10 +206,10 @@ app.controller('searchController', ['PointOfInterestService', function (PointOfI
     self.categoriesFilter = {};
     self.pointsOfInterest = [];
     PointOfInterestService.getPointsOfInterest()
-    .then(function(result){
-        self.pointsOfInterest = result;
-    });
-    
+        .then(function (result) {
+            self.pointsOfInterest = result;
+        });
+
     self.search = function (name) {
         self.searchResults = [];
         self.categoriesPossibleFilter = [];
@@ -238,6 +247,10 @@ app.controller('searchController', ['PointOfInterestService', function (PointOfI
 //-------------------------------------------------------------------------------------------------------------------
 app.factory('UserService', ['$http', function ($http) {
     let service = {};
+
+    let self = this;
+    self.pointsOfInterest = [];
+
     service.isLoggedIn = false;
     service.login = function (user) {
         let data = {
@@ -261,6 +274,24 @@ app.factory('UserService', ['$http', function ($http) {
         }, function (error) {
             return Promise.reject(e);
         });
+    };
+    service.getFavorites = function () {
+        if (service.isLoggedIn) {
+            console.log("gonnaPost");
+            return $http({
+                method: 'POST',
+                url: 'http://127.0.0.1:3000/private/getSavedPOI',
+                data: $http.defaults.headers.common.x - auth - token
+            })
+            .then(function (response) {
+                self.pointsOfInterest = [];
+                angular.forEach(res.data, function (poi) {
+                    self.pointsOfInterest.push(new PointOfInterestModel(poi));
+                });
+                console.log("Posted");
+                return self.pointsOfInterest;
+            })
+        }
     };
     return service;
 }]);
@@ -308,6 +339,9 @@ app.config(['$routeProvider', function ($routeProvider) {
         })
         .when("/show/:poiId", {
             templateUrl: "public/views/poi.html",
+        })
+        .when("/favorites", {
+            templateUrl: "public/views/favorite.html",
         })
         .otherwise({
             redirect: '/',
