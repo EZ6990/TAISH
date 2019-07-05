@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <div class="container" ng-controller="searchController as searchCtrl">
-    <div class="mx-auto d-inline-flex">
-        <input ng-model="search.Name" type="text" class="mx-auto">
-        <button ng-click="searchCtrl.search(search.Name)" class="btn btn-primary mx-auto" >Search</button>
-    </div>
-    <div class="dropdown">
-        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Categories</button>
-        <div class="dropdown-menu">
-            <div class="dropdown-item form-check">
-                <div class="list-group" ng-repeat="category in searchCtrl.categoriesPossibleFilter">
-                    <label class="form-check-label">
-                        <input ng-model="searchCtrl.categoriesFilter[category.Id]" type="checkbox" class="form-check-input">{{category.Name}}
-                    </label>
+    <div class="d-flex mb-5 flex-column">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="dropdown position-static">
+                    <button type="button" class="btn btn-primary" data-toggle="dropdown"><i class="fas fa-filter"></i></button>
+                    <div class="dropdown-menu w-100">
+                        <div class="dropdown-item form-check">
+                            <div class="list-group" ng-repeat="category in searchCtrl.categoriesPossibleFilter track by category.Id">
+                                <label class="form-check-label">
+                                    <input ng-model="searchCtrl.categoriesFilter[category.Id]" type="checkbox" class="form-check-input">{{category.Name}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <input class="flex-grow-1" ng-model="search.Name" type="text" class="mx-auto" ng-change=searchCtrl.search(search.Name) placeholder="Search">
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="form-check-inline pr-2">
+                <label class="form-check-label">
+                    <input ng-model="bOrderbyRate.descending" ng-value="true" type="radio" class="form-check-input" name="optradio">desc</label>
+            </div>
+            <div class="form-check-inline pr-2">
+                <label class="form-check-label">
+                    <input ng-model="bOrderbyRate.descending" ng-value="false" type="radio" class="form-check-input" name="optradio">asce</label>
             </div>
         </div>
     </div>
-    <div class="list-group" ng-repeat="poi in searchCtrl.searchResults | filter:searchCtrl.filterByCategory | orderBy:'Rate':true">
-        <a ng-herf="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block">
-            <div class="list-inline">
+        <a ng-href="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block" ng-repeat="poi in searchCtrl.searchResults | filter:searchCtrl.filterByCategory | orderBy:'Rate':bOrderbyRate.descending track by poi.Id">
+            <div class="d-flex flex-row">
                 <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
-                <span class="list-inline-item mw-100">Name {{poi.Name}}</span>
-                <span class="list-inline-item mw-100 text-black-50">Rate {{poi.Rate}}</span>
+                <div class="d-flex flex-column ml-3">
+                    <span class="flex-fill">Name {{poi.Name}}</span>
+                    <span class="flex-fill text-black-50">Rate {{poi.Rate}}</span>
+                </div>
             </div>
         </a>
-    </div>
 </div>

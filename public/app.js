@@ -150,36 +150,71 @@ app.controller('citiesController', ['$http', 'CityModel', function ($http, CityM
     };
 }]);
 
-//-------------------------------------------------------------------------------------------------------------------
-app.controller('searchController', ['$http', 'PointOfInterestModel', function ($http, PointOfInterestModel) {
+app.controller('pointOfInterestController', ['$http','$routeParams','$rootScope','PointOfInterestService', function ($http,$routeParams,$rootScope,PointOfInterestService) {
     let self = this;
-    self.searchResults = []
-    self.categoriesPossibleFilter = []
-    self.categoriesFilter = []
-    self.getPointsOfInterest = function () {
-        $http.get('http://127.0.0.1:3000/public/getALLPOI')
-            .then(function (res) {
-                self.pointsOfInterest = [];
-                angular.forEach(res.data, function (poi) {
-                    self.pointsOfInterest.push(new PointOfInterestModel(poi));
+    PointOfInterestService.getPointOfInterestById($routeParams.poiId)
+    .then(function(poi){
+        self.pointOfInterest = poi;
+    });
+}]);
+
+app.service('PointOfInterestService',['$http','PointOfInterestModel', function($http,PointOfInterestModel) {
+    let self = this;
+    self.pointsOfInterest = [];
+
+    self.getPointsOfInterest = function () { 
+        if (self.pointsOfInterest.length == 0){
+            return $http.get('http://127.0.0.1:3000/public/getALLPOI')
+                .then(function (res) {
+                    self.pointsOfInterest = [];
+                    angular.forEach(res.data, function (poi) {
+                        self.pointsOfInterest.push(new PointOfInterestModel(poi));
+                    });
+                    return self.pointsOfInterest;
                 });
-            });
+        }
+        else{
+            return Promise.resolve(self.pointsOfInterest);
+        }
     };
+    self.getPointOfInterestById = function (poiId) {
+        return self.getPointsOfInterest()
+        .then(function(pois){
+            for (let i = 0; i < pois.length; i++){
+                let poi = pois[i];
+                if (poi.Id == poiId)
+                    return poi;
+            }
+        })
+    };
+  }]);
+
+//-------------------------------------------------------------------------------------------------------------------
+app.controller('searchController', ['PointOfInterestService', function (PointOfInterestService) {
+    let self = this;
+    self.searchResults = [];
+    self.categoriesPossibleFilter = [];
+    self.categoriesFilter = {};
+    self.pointsOfInterest = [];
+    PointOfInterestService.getPointsOfInterest()
+    .then(function(result){
+        self.pointsOfInterest = result;
+    });
+    
     self.search = function (name) {
         self.searchResults = [];
         self.categoriesPossibleFilter = [];
+        self.categoriesFilter = {};
         angular.forEach(self.pointsOfInterest, function (item) {
             if (item.Name.includes(name)) {
                 self.searchResults.push(item);
             }
-
         });
         angular.forEach(self.searchResults, function (pointOfInterest) {
             angular.forEach(pointOfInterest.Categories, function (category) {
                 bAdd = true;
                 angular.forEach(self.categoriesPossibleFilter, function (filterCategory) {
-                    console.log(filterCategory);
-                    if (filterCategory.Name == category.Name) {
+                    if (filterCategory.Id == category.Id) {
                         bAdd = false;
                     }
                 });
@@ -189,10 +224,8 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
                 }
             });
         });
-        console.log(self.searchResults);
     }
     self.filterByCategory = function (pointOfInterest) {
-        console.log(pointOfInterest.Name + ":" + pointOfInterest.Rate);
         for (i = 0; i < pointOfInterest.Categories.length; i++) {
             var category = pointOfInterest.Categories[i];
             if (self.categoriesFilter[category.Id] == true) {
@@ -201,8 +234,6 @@ app.controller('searchController', ['$http', 'PointOfInterestModel', function ($
             return false;
         };
     };
-    self.getPointsOfInterest();
-
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 app.factory('UserService', ['$http', function ($http) {
