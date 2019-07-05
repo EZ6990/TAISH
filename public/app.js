@@ -292,7 +292,7 @@ app.factory('UserService', ['$http','$window', function ($http,$window) {
             })
                 .then(function (response) {
                     self.pointsOfInterest = [];
-                    angular.forEach(res.data, function (poi) {
+                    angular.forEach(response.data, function (poi) {
                         self.pointsOfInterest.push(new PointOfInterestModel(poi));
                     });
                     console.log("Posted");

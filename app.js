@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var user_module = require('./user_module');
 var authorization_module = require('./authorization_module');
 var authentication_module = require('./authentication_module');
@@ -9,6 +10,7 @@ var app = express();
 var port = 3000;
 
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
