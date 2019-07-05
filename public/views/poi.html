@@ -1,6 +1,18 @@
 
 
 <div class="container" ng-controller="pointOfInterestController as poiCtrl">
-    <h1>{{ poiCtrl.pointOfInterest.Name }}</h1>
-    <img class="d-inline-block" ng-src={{poiCtrl.pointOfInterest.Picture}}>
+    <div class="d-flex flex-column">
+        <h1 class="bg-info align-self-left">{{ poiCtrl.pointOfInterest.Name }}</h1>
+        <p class="bg-info align-self-left">{{ poiCtrl.pointOfInterest.Name }}</p>
+        <div class="d-flex flex-row">
+            <img class="img-thumbnail img-fluid d-inline-block mr-1" ng-src={{poiCtrl.pointOfInterest.Picture}} width="500px" hieght= "500px">
+            <div class="d-flex flex-column">
+                <label class="bg-info">{{poiCtrl.pointOfInterest.Description}}</label>
+            </div>
+        </div>
+    </div>
+    
+
+
+    
 </div>

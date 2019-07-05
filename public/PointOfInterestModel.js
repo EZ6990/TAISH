@@ -7,8 +7,10 @@ app.factory('PointOfInterestModel', ['$http', function($http) {
         setData: function(poiData) {
             angular.extend(this, poiData);
         },
-        load: function(poiID) {
-            $http.get('/show/' + poiID).then(function(poiData) {
+        getReviews: function() {
+                return $http.get('http://127.0.0.1:3000/public/getPOIReviews/' + this.Id + '/' + -1)
+                .then(function(reviews) {
+                    return reviews;
             });
         },
     };

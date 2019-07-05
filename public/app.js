@@ -150,18 +150,25 @@ app.controller('citiesController', ['$http', 'CityModel', function ($http, CityM
     };
 }]);
 
-app.controller('pointOfInterestController', ['$http','$routeParams','$rootScope','PointOfInterestService', function ($http,$routeParams,$rootScope,PointOfInterestService) {
+app.controller('pointOfInterestController', ['$scope','$routeParams','PointOfInterestService', function ($scope,$routeParams,PointOfInterestService) {
     let self = this;
+    self.pointOfInterest = {};
+
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
     .then(function(poi){
         self.pointOfInterest = poi;
+        if(!$scope.$$phase){
+            $scope.$digest();
+        }
+    })
+    .then(function(review){
+        self.pointOfInterest.getReviews();
     });
 }]);
 
 app.service('PointOfInterestService',['$http','PointOfInterestModel', function($http,PointOfInterestModel) {
     let self = this;
     self.pointsOfInterest = [];
-
     self.getPointsOfInterest = function () { 
         if (self.pointsOfInterest.length == 0){
             return $http.get('http://127.0.0.1:3000/public/getALLPOI')
