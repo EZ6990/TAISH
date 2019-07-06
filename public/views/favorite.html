@@ -12,11 +12,11 @@
             <tbody>
                 <tr ng-model="favCtrl.favPOI" ng-repeat="poi in favCtrl.favPOI | orderBy:propertyName:reverse">
                     <td>
-                        <span class="table-up"><a href="#!" class="indigo-text" ng-click="goUp(poi.pos)"><i
+                        <span class="table-up"><a href="#!" class="indigo-text" ng-click="goDown(poi.pos)"><i
                                     class="fas fa-long-arrow-alt-up" aria-hidden="true"></i>
                             </a>
                         </span>
-                        <span class="table-down"><a href="#!" class="indigo-text" ng-click="goDown(poi.pos)"><i
+                        <span class="table-down"><a href="#!" class="indigo-text" ng-click="goUp(poi.pos)"><i
                                     class="fas fa-long-arrow-alt-down" aria-hidden="true"></i>
                             </a>
                         </span>
