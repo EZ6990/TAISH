@@ -275,14 +275,13 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
                 }
             }
         }
-        console.log(self.favPOI)
     }
     $scope.goDown = function (pos) {
         var min =  Number.MAX_SAFE_INTEGER;
         var comArr = eval(self.favPOI);
         for (var i = 0; i < comArr.length; i++) {
-            if (!min || parseInt(self.favPOI[i].pos) < min)
-                min = coself.favPOImArr[i].pos;
+            if (parseInt(self.favPOI[i].pos) < min)
+                min = self.favPOI[i].pos;
         }
         if (pos > min) {
             for (var i = 0; i < comArr.length; i++) {

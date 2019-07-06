@@ -11,7 +11,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-model="favCtrl.favPOI" ng-repeat="poi in ng-model | orderBy:propertyName:reverse">
+                <tr ng-model="favCtrl.favPOI" ng-repeat="poi in favCtrl.favPOI | orderBy:propertyName:reverse">
                     <td>{{poi.pos}}</td>
                     <td>{{poi.Name}}</td>
                     <td>{{poi.Categories[0].Name}}</td>
