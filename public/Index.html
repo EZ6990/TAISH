@@ -5,6 +5,7 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css" crossorigin="anonymous">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" crossorigin="anonymous"></script>
@@ -20,37 +21,38 @@
     <base href="/">
 </head>
 <body>
-    <header><h1>Routing App Example</h1></header>
-    <div ng-controller="mainController as mainCtrl">
-        <div>
-            <a ng-href="/">Home</a>
+    <div class="mb-5 pb-5" ng-controller="mainController as mainCtrl">
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: #e3f2fd;">
+            <a class="navbar-brand" ng-href="#">TAISH</a>
+            <div class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" ng-href="/">Home</a>
+            </li>
+            <li class="nav-item" ng-show="mainCtrl.userService.isLoggedIn">
+                <a class="nav-link" ng-href="/cities">Cities List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" ng-href="/login" ng-hide="mainCtrl.userService.isLoggedIn">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" ng-href="/register" ng-hide="mainCtrl.userService.isLoggedIn">register</a>
+            </li>
+            <li>
+                <span ng-show="mainCtrl.userService.isLoggedIn">
+                    <a class="nav-link" ng-href="/favorites">favorites</a>
+                </span>
+            </li>
+            <li class="nav-item">
+                <span>
+                    <a class="nav-link" ng-href="/search">search</a>
+                </span>
+            </li>
+            </div>
         </div>
-        <div ng-show="mainCtrl.userService.isLoggedIn">
-            <a ng-href="/cities">Cities List</a>
-        </div>
-        <div>
-            <span ng-hide="mainCtrl.userService.isLoggedIn">
-                <a ng-href="/login">Login</a>
-            </span>
-        </div>
-        <div>
-            <span ng-hide="mainCtrl.userService.isLoggedIn">
-                <a ng-href="/register">register</a>
-            </span>
-        </div>
-        <div>
-            <span ng-show="mainCtrl.userService.isLoggedIn">
-                <a ng-href="/favorites">favorites</a>
-            </span>
-        </div>
-        <div>
-            <span>
-                <a ng-href="/search">search</a>
-            </span>
-        </div>
+        </nav>
     </div>
-    <br>
-    <br>
-    <ng-view></ng-view>
+    <div class="mt-5 pt-5">
+        <ng-view></ng-view>
+    </div>
 </body>
 </html> 
