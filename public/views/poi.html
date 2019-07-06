@@ -6,7 +6,7 @@
         <div class="d-flex flex-row align-items-center">
             <div class="d-inline-flex mr-2">
                 <span class="fa fa-star text-warning justify-content-center" ng-repeat="i in range(((poiCtrl.pointOfInterest.Rate)/100)*5)"></span>
-                <span class="fa fa-star text-light" ng-repeat="i in range(5 - ((poiCtrl.pointOfInterest.Rate)/100) *5)"></span>
+                <span class="fa fa-star text-light justify-content-center" ng-repeat="i in range(5 - ((poiCtrl.pointOfInterest.Rate)/100) *5)"></span>
             </div>
             <span class="align-self-left">{{ poiCtrl.poiReviews.length }} reviews</span>
             <span class="align-self-left mx-2 px-2">|</span>

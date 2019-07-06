@@ -161,7 +161,6 @@ app.controller('pointOfInterestController', ['$scope','$routeParams','PointOfInt
         for (var i = 0; i < num; i++) { 
           ratings.push(i) 
         } 
-        console.log(ratings);
         return ratings;
     };
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
@@ -217,12 +216,19 @@ app.controller('favoriteController', ['UserService', function (UserService) {
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('searchController', ['PointOfInterestService', function (PointOfInterestService) {
+app.controller('searchController', ['PointOfInterestService','$scope', function (PointOfInterestService,$scope) {
     let self = this;
     self.searchResults = [];
     self.categoriesPossibleFilter = [];
     self.categoriesFilter = {};
     self.pointsOfInterest = [];
+    $scope.range = function(num){
+        var ratings = []; 
+        for (var i = 0; i < num; i++) { 
+          ratings.push(i) 
+        } 
+        return ratings;
+    };
     PointOfInterestService.getPointsOfInterest()
         .then(function (result) {
             self.pointsOfInterest = result;
