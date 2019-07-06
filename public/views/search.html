@@ -29,20 +29,20 @@
             </div>
         </div>
     </div>
-    <div class="d-flex flex-row align-items-center inline-block list-group-item list-group-item-action" ng-repeat="poi in searchCtrl.searchResults | filter:searchCtrl.filterByCategory | orderBy:'Rate':bOrderbyRate.descending track by poi.Id">
-        <a ng-href="/show/{{poi.Id}}" class="flex-grow-1">
-            <div class="d-flex flex-row">
-                <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
-                <div class="d-flex flex-column ml-3">
-                    <span class="flex-fill">Name {{poi.Name}}</span>
-                    <div class="flex-fill d-inline-flex">
-                        <span class="text-black-50">Rate {{poi.Rate}}%</span>
-                        <span class="fa fa-star text-warning" ng-repeat="i in range(((poi.Rate)/100)*5)"></span>
-                        <span class="fa fa-star text-light" ng-repeat="i in range(5 - ((poi.Rate)/100) *5)"></span>
+        <div class="d-flex flex-row list-group-item list-group-item-action align-items-center" ng-repeat="poi in searchCtrl.searchResults | filter:searchCtrl.filterByCategory | orderBy:'Rate':bOrderbyRate.descending track by poi.Id">
+            <a ng-href="/show/{{poi.Id}}" class="flex-grow-1 list-group-item-action">
+                <div class="d-flex flex-row ">
+                    <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
+                    <div class="d-flex flex-column ml-3">
+                        <span class="flex-fill">Name {{poi.Name}}</span>
+                        <div class="flex-fill d-inline-flex">
+                            <span class="text-black-50">Rate {{poi.Rate}}%</span>
+                            <span class="fa fa-star text-warning" ng-repeat="i in range(((poi.Rate)/100)*5)"></span>
+                            <span class="fa fa-star text-light" ng-repeat="i in range(5 - ((poi.Rate)/100) *5)"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
-        <span data-toggle="tooltip" title="Add to favorite!"><i class="fas fa-heart"></i></span>
-    </div>
+            </a>
+            <a ng-herf="#"" ng-click=""><i class="fas fa-heart"></i></a>
+        </div>
 </div>
