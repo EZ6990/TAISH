@@ -2,8 +2,17 @@
 
 <div class="container" ng-controller="pointOfInterestController as poiCtrl">
     <div class="d-flex flex-column">
-        <h1 class="bg-info align-self-left">{{ poiCtrl.pointOfInterest.Name }}</h1>
-        <p class="bg-info align-self-left">{{ poiCtrl.pointOfInterest.Name }}</p>
+        <h1 class="display-1 bg-info align-self-left">{{ poiCtrl.pointOfInterest.Name }}</h1>
+        <div class="d-flex flex-row align-items-center">
+            <div class="d-inline-flex mr-2">
+                <span class="fa fa-star text-warning justify-content-center" ng-repeat="i in range(((poiCtrl.pointOfInterest.Rate)/100)*5)"></span>
+                <span class="fa fa-star text-light" ng-repeat="i in range(5 - ((poiCtrl.pointOfInterest.Rate)/100) *5)"></span>
+            </div>
+            <span class="align-self-left">{{ poiCtrl.poiReviews.length }} reviews</span>
+            <span class="align-self-left mx-2 px-2">|</span>
+            <span class="align-self-left" ng-repeat="category in poiCtrl.pointOfInterest.Categories">{{ category.Name }}</span>
+        </div>
+        
         <div class="d-flex flex-row">
             <img class="img-thumbnail img-fluid d-inline-block mr-1" ng-src={{poiCtrl.pointOfInterest.Picture}} width="500px" hieght= "500px">
             <div class="d-flex flex-column">

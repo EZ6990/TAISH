@@ -154,16 +154,26 @@ app.controller('citiesController', ['$http', 'CityModel', function ($http, CityM
 app.controller('pointOfInterestController', ['$scope','$routeParams','PointOfInterestService', function ($scope,$routeParams,PointOfInterestService) {
     let self = this;
     self.pointOfInterest = {};
+    self.poiReviews = [];
 
+    $scope.range = function(num){
+        var ratings = []; 
+        for (var i = 0; i < num; i++) { 
+          ratings.push(i) 
+        } 
+        console.log(ratings);
+        return ratings;
+    };
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
     .then(function(poi){
         self.pointOfInterest = poi;
-        if(!$scope.$$phase){
-            $scope.$digest();
-        }
+        return self.pointOfInterest.getReviews();
     })
-    .then(function(review){
-        self.pointOfInterest.getReviews();
+    .then(function(reviews){
+        self.poiReviews = reviews;
+        // if(!$scope.$$phase){
+        //     $scope.$digest();
+        // }
     });
 }]);
 //-------------------------------------------------------------------------------------------------------------------
