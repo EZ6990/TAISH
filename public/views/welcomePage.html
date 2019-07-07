@@ -1,0 +1,16 @@
+
+<div class="welcome-container" ng-controller="welcomeController as welCtrl">
+    <h3>hello guest</h3>
+    <div>
+        <p><h1>explore our beautiful places</h1></p>
+            <a ng-href="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block" ng-repeat="poi in welCtrl.randArr | orderBy:'Rate':bOrderbyRate.ascending track by poi.Id"">
+                <div class="d-flex flex-row">
+                    <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
+                    <div class="d-flex flex-column ml-3">
+                        <span class="flex-fill">Name {{poi.Name}}</span>
+                        <span class="flex-fill text-black-50">Rate {{poi.Rate}}</span>
+                    </div>
+                </div>
+            </a>
+    </div>
+</div>

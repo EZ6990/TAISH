@@ -8,9 +8,31 @@ app.config(function (localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('node_angular_App');
 });
 //-------------------------------------------------------------------------------------------------------------------
+app.controller('welcomeController', ['UserService', 'PointOfInterestService', '$scope', function (UserService, PointOfInterestService, $scope) {
+    let self = this;
+    self.randArr = [];
+    let randNum = 3;
+    if(!typeof self.pointsOfInterest === "undefined"){
+        for (let index = 0; index < randNum; index++) {
+            self.randArr[index] = self.pointsOfInterest[Math.floor(Math.random() * self.pointsOfInterest.length)];
+        }
+
+    }
+    else{
+    PointOfInterestService.getPointsOfInterest()
+        .then(function (result) {
+            self.pointsOfInterest = result;
+      
+            for (let index = 0; index < randNum; index++) {
+                self.randArr[index] = result[Math.floor(Math.random() * result.length)];
+            }
+
+        })
+    }
+}]);
+//-------------------------------------------------------------------------------------------------------------------
 app.controller('mainController', ['UserService', function (UserService) {
     let vm = this;
-    vm.greeting = 'Have a nice day';
     vm.userService = UserService;
 }]);
 //-------------------------------------------------------------------------------------------------------------------
@@ -125,31 +147,7 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
         };
     }]);
 
-//-------------------------------------------------------------------------------------------------------------------
-app.controller('citiesController', ['$http', 'CityModel', function ($http, CityModel) {
-    let self = this;
 
-    self.fieldToOrderBy = "name";
-    // self.cities = [];
-    self.getCities = function () {
-        $http.get('/cities')
-            .then(function (res) {
-                // self.cities = res.data;
-                //We build now cityModel for each city
-                self.cities = [];
-                angular.forEach(res.data, function (city) {
-                    self.cities.push(new CityModel(city));
-                });
-            });
-    };
-    self.addCity = function () {
-        let city = new CityModel(self.myCity);
-        if (city) {
-            city.add();
-            self.getCities();
-        }
-    };
-}]);
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfInterestService', function ($scope, $routeParams, PointOfInterestService) {
     let self = this;
@@ -446,8 +444,7 @@ app.config(['$locationProvider', function ($locationProvider) {
 app.config(['$routeProvider', function ($routeProvider) {
     $routeProvider
         .when("/", {
-            templateUrl: "public/views/home.html",
-            controller: "mainController"
+            templateUrl: "public/views/welcomePage.html",
         })
         .when("/login", {
             templateUrl: "public/views/tmplogin.html",
