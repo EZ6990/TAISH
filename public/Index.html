@@ -26,10 +26,7 @@
             <a class="navbar-brand" ng-href="#">TAISH</a>
             <div class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" ng-href="/">Home</a>
-            </li>
-            <li class="nav-item" ng-show="mainCtrl.userService.isLoggedIn">
-                <a class="nav-link" ng-href="/cities">Cities List</a>
+                <a class="nav-link" ng-href="{{mainCtrl.homeUrl[mainCtrl.userService.isLoggedIn]}}">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" ng-href="/login" ng-hide="mainCtrl.userService.isLoggedIn">Login</a>

@@ -12,27 +12,22 @@ app.controller('welcomeController', ['UserService', 'PointOfInterestService', '$
     let self = this;
     self.randArr = [];
     let randNum = 3;
-    if(!typeof self.pointsOfInterest === "undefined"){
-        for (let index = 0; index < randNum; index++) {
-            self.randArr[index] = self.pointsOfInterest[Math.floor(Math.random() * self.pointsOfInterest.length)];
-        }
 
-    }
-    else{
     PointOfInterestService.getPointsOfInterest()
         .then(function (result) {
             self.pointsOfInterest = result;
-      
+
             for (let index = 0; index < randNum; index++) {
                 self.randArr[index] = result[Math.floor(Math.random() * result.length)];
             }
         })
-    }
+
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('mainController', ['UserService', function (UserService) {
     let vm = this;
     vm.userService = UserService;
+    vm.homeUrl = { false: "/", true: "/userHome" };
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -137,7 +132,7 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
             if (valid) {
                 UserService.login(self.user2).then(function (success) {
                     $window.alert('You are logged in');
-                    $location.path('/');
+                    $location.path('/userHome');
                 }).catch(function (error) {
                     self.errorMessage = error.data;
                     $window.alert(self.errorMessage);
@@ -153,11 +148,11 @@ app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfI
     self.pointOfInterest = {};
     self.poiReviews = [];
 
-    $scope.range = function(num){
-        var ratings = []; 
-        for (var i = 0; i < num; i++) { 
-          ratings.push(i) 
-        } 
+    $scope.range = function (num) {
+        var ratings = [];
+        for (var i = 0; i < num; i++) {
+            ratings.push(i)
+        }
         return ratings;
     };
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
@@ -205,18 +200,43 @@ app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
+app.controller('loggedInController', ['UserService', '$window', function (UserService, $window) {
+    let self = this;
+    self.username = $window.sessionStorage.getItem('username');
+    self.favPOI = [];
+    self.reqPOI = [];
+    self.hasFav=false;
+
+    UserService.getFavorites()
+        .then(function (response) {
+            self.hasFav=response.length>0;
+            console.log(self.hasFav);
+            self.favPOI.push(response[response.length - 1]);
+            self.favPOI.push(response[response.length - 2]);
+
+        });
+
+    UserService.getRecommended()
+        .then(function (response) {
+
+            self.reqPOI.push(response[response.length - 1]);
+            self.reqPOI.push(response[response.length - 2]);
+        });
+
+}]);
+//-------------------------------------------------------------------------------------------------------------------
 app.controller('favoriteController', ['UserService', '$scope', '$window', '$http', function (UserService, $scope, $window, $http) {
     let self = this;
     self.favPOI = [];
 
 
     UserService.getFavorites()
-    .then(function (response) {
-        self.favPOI = response;
-        if(!$scope.$$phase){
-            $scope.$digest();
-        }
-    });
+        .then(function (response) {
+            self.favPOI = response;
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
+        });
 
     $scope.propertyName = 'pos';
     $scope.reverse = false;
@@ -280,26 +300,26 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
     }
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('searchController', ['PointOfInterestService','$scope','UserService', function (PointOfInterestService,$scope,UserService) {
+app.controller('searchController', ['PointOfInterestService', '$scope', 'UserService', function (PointOfInterestService, $scope, UserService) {
     let self = this;
     self.searchResults = [];
     self.categoriesPossibleFilter = [];
     self.categoriesFilter = {};
     self.pointsOfInterest = [];
     self.isLoggedIn = UserService.isLoggedIn;
-    
-    $scope.range = function(num){
-        var ratings = []; 
-        for (var i = 0; i < num; i++) { 
-          ratings.push(i) 
-        } 
+
+    $scope.range = function (num) {
+        var ratings = [];
+        for (var i = 0; i < num; i++) {
+            ratings.push(i)
+        }
         return ratings;
     };
 
     PointOfInterestService.getPointsOfInterest()
-    .then(function (result) {
-        self.pointsOfInterest = result;
-    });
+        .then(function (result) {
+            self.pointsOfInterest = result;
+        });
 
     self.search = function (name) {
         self.searchResults = [];
@@ -326,18 +346,18 @@ app.controller('searchController', ['PointOfInterestService','$scope','UserServi
         });
     }
 
-    self.removeFromFavorite = function (poiId){
+    self.removeFromFavorite = function (poiId) {
         UserService.removeFromFavorite(poiId);
     };
-    self.addToFavorite = function (poiId){
+    self.addToFavorite = function (poiId) {
         UserService.addToFavorite(poiId)
-        .then(function(response){
-            // if(!$scope.$$phase){
-            //     $scope.$digest();
-            // }
-        })
+            .then(function (response) {
+                // if(!$scope.$$phase){
+                //     $scope.$digest();
+                // }
+            })
     };
-    self.isInFavorite = function (poiId){
+    self.isInFavorite = function (poiId) {
         return UserService.isInFavorite(poiId);
     };
     self.filterByCategory = function (pointOfInterest) {
@@ -352,15 +372,19 @@ app.controller('searchController', ['PointOfInterestService','$scope','UserServi
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.factory('UserService', ['$http', '$window', 'PointOfInterestModel','PointOfInterestService', function ($http, $window, PointOfInterestModel,PointOfInterestService) {
+app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOfInterestService', function ($http, $window, PointOfInterestModel, PointOfInterestService) {
     let service = {};
 
     let self = this;
     self.currentUser = {};
     self.currentUser.favorites = [];
+    self.currentUser.favorites = [];
+
     service.isLoggedIn = false;
-    
+
     service.login = function (user) {
+        $window.sessionStorage.setItem('username', user.username);
+
         let data = {
             username: user.username,
             password: user.password
@@ -380,38 +404,59 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel','PointOfI
             service.isLoggedIn = true;
             return service.getFavorites();
         })
-        .then(function (response){
-            
-        })
-        .catch(function (error) {
-            return Promise.reject(error);
-        });
+            .then(function (response) {
+
+            })
+            .catch(function (error) {
+                return Promise.reject(error);
+            });
     };
     service.getFavorites = function () {
         if (service.isLoggedIn) {
-            if (self.currentUser.favorites.length == 0){
-            return $http({
+            if (self.currentUser.favorites.length == 0) {
+                return $http({
                     method: 'GET',
                     url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
                     headers: { 'x-auth-token': $window.sessionStorage.getItem('token') }
                 })
-                .then(function (response) {
-                    self.currentUser.favorites = [];
-                    let i = 1;
-                    angular.forEach(response.data, function (poi) {
-                        poi["pos"] = i;
-                        i++;
-                        self.currentUser.favorites.push(new PointOfInterestModel(poi));
-                    });
-                    return self.currentUser.favorites;
-                })
+                    .then(function (response) {
+                        self.currentUser.favorites = [];
+                        let i = 1;
+                        angular.forEach(response.data, function (poi) {
+                            poi["pos"] = i;
+                            i++;
+                            self.currentUser.favorites.push(new PointOfInterestModel(poi));
+                        });
+                        return self.currentUser.favorites;
+                    })
             }
-            else{
+            else {
                 return Promise.resolve(self.currentUser.favorites);
             }
         }
-        else{
+        else {
             return Promise.reject("User not logged in");
+        }
+    };
+    service.getRecommended = function () {
+        if (service.isLoggedIn) {
+            if (self.currentUser.favorites.length == 0) {
+                return $http({
+                    method: 'GET',
+                    url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
+                    headers: { 'x-auth-token': $window.sessionStorage.getItem('token') }
+                })
+                    .then(function (response) {
+                        self.currentUser.recommended = [];
+                        angular.forEach(response.data, function (poi) {
+                            self.currentUser.recommended.push(new PointOfInterestModel(poi));
+                        })
+                        return self.currentUser;
+                    })
+            }
+            else {
+                return Promise.resolve(self.currentUser.favorites);
+            }
         }
     };
     service.saveNewOrder = function (poiArr) {
@@ -433,9 +478,9 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel','PointOfI
     service.addToFavorite = function (poiId) {
 
         var ans = service.isInFavorite(poiId);
-        if(ans[0])
+        if (ans[0])
             return Promise.reject("already in favorites");
-            
+
         var req = {
             method: 'POST',
             url: 'http://127.0.0.1:3000/private/user/savePOI',
@@ -448,30 +493,30 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel','PointOfI
             }
         }
         return $http(req)
-        .then(function (result) {
-            return PointOfInterestService.getPointOfInterestById(poiId);
-        })
-        .then(function(poi){
-            newpoi = new PointOfInterestModel(poi);
-            newpoi["pos"] = self.currentUser.favorites.length + 1;
+            .then(function (result) {
+                return PointOfInterestService.getPointOfInterestById(poiId);
+            })
+            .then(function (poi) {
+                newpoi = new PointOfInterestModel(poi);
+                newpoi["pos"] = self.currentUser.favorites.length + 1;
 
-            console.log(self.currentUser.favorites);
-            self.currentUser.favorites.push(newpoi);
-            console.log(self.currentUser.favorites);
+                console.log(self.currentUser.favorites);
+                self.currentUser.favorites.push(newpoi);
+                console.log(self.currentUser.favorites);
 
-            return self.currentUser.favorites;
-        })
-        .catch(function (err) {
-            return Promise.reject(err);
+                return self.currentUser.favorites;
+            })
+            .catch(function (err) {
+                return Promise.reject(err);
 
-        })
+            })
     };
     service.removeFromFavorite = function (poiId) {
 
 
         favorites = self.currentUser.favorites;
         var ans = service.isInFavorite(poiId);
-        if(!ans[0])
+        if (!ans[0])
             return Promise.reject(favorites[ans[1]].Name + " not in favorites");
 
         console.log(favorites);
@@ -479,9 +524,9 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel','PointOfI
             if (favorites[ans[1]].pos < favorites[i].pos)
                 favorites[i].pos--;
 
-                
+
         favorites.splice(ans[1], 1);
-        
+
         var req = {
             method: 'DELETE',
             url: 'http://127.0.0.1:3000/private/user/removeSavedPOI',
@@ -498,16 +543,16 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel','PointOfI
             res.send(err)
         })
     };
-    service.isInFavorite = function(poiId){
+    service.isInFavorite = function (poiId) {
         var favorites = self.currentUser.favorites;
         for (var i = 0; i < favorites.length; i++) {
             if (favorites[i].Id === poiId) {
-                return [true,i];
+                return [true, i];
             }
         }
-        return [false,-1];
+        return [false, -1];
     };
-    service.login({ username: "admin", password: "Password1" });
+    //service.login({ username: "admin", password: "Password1" });
     return service;
 }]);
 //-------------------------------------------------------------------------------------------------------------------
@@ -539,11 +584,11 @@ app.config(['$routeProvider', function ($routeProvider) {
         .when("/", {
             templateUrl: "public/views/welcomePage.html",
         })
+        .when("/userHome", {
+            templateUrl: "public/views/loggedInHome.html",
+        })
         .when("/login", {
             templateUrl: "public/views/tmplogin.html",
-        })
-        .when("/cities", {
-            templateUrl: "public/views/cities.html",
         })
         .when("/register", {
             templateUrl: "public/views/register.html",
