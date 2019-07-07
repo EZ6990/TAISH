@@ -24,10 +24,11 @@ app.controller('welcomeController', ['UserService', 'PointOfInterestService', '$
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('mainController', ['UserService', function (UserService) {
+app.controller('mainController', ['UserService','$scope', function (UserService,$scope) {
     let vm = this;
     vm.userService = UserService;
     vm.numInFavorites = 0;
+    vm.homeUrl = { false: "/", true: "/userHome" };
 
     vm.FavoritesChanges = function(){
         return vm.userService.getFavorites()
@@ -109,7 +110,6 @@ app.controller('registerController', ['questionServirce', '$http',
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('loginController', ['UserService', 'questionServirce', '$location', '$window', '$scope', '$http',
     function (UserService, questionServirce, $location, $window, $scope, $http) {
-        console.log("asfd");
         let self = this;
         $scope.forgotSection = false;
         self.user2 = { username: "admin", password: "Password1" };
@@ -212,7 +212,7 @@ app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('loggedInController', ['UserService', '$window', function (UserService, $window) {
+app.controller('loggedInController', ['UserService', '$window','$scope', function (UserService, $window,$scope) {
     let self = this;
     self.username = $window.sessionStorage.getItem('username');
     self.favPOI = [];
@@ -221,18 +221,25 @@ app.controller('loggedInController', ['UserService', '$window', function (UserSe
 
     UserService.getFavorites()
         .then(function (response) {
+            
             self.hasFav=response.length>0;
-            console.log(self.hasFav);
             self.favPOI.push(response[response.length - 1]);
             self.favPOI.push(response[response.length - 2]);
 
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
         });
 
     UserService.getRecommended()
         .then(function (response) {
-
+            
             self.reqPOI.push(response[response.length - 1]);
             self.reqPOI.push(response[response.length - 2]);
+
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
         });
 
 }]);
@@ -407,16 +414,17 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
             method: 'POST',
             url: 'http://127.0.0.1:3000/public/login',
             data: data
-        }).then(function (response) {
-            let token = response.data;
-            $window.sessionStorage.setItem('token', token);
-            $http.defaults.headers.common = {
-                'x-auth-token': token,
-                'user': user.username
-            };
-            service.isLoggedIn = true;
-            return service.getFavorites();
-        })
+            })
+            .then(function (response) {
+                let token = response.data;
+                $window.sessionStorage.setItem('token', token);
+                $http.defaults.headers.common = {
+                    'x-auth-token': token,
+                    'user': user.username
+                };
+                service.isLoggedIn = true;
+                return service.getFavorites();
+            })
             .then(function (response) {
 
             })
@@ -457,7 +465,7 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
             if (self.currentUser.favorites.length == 0) {
                 return $http({
                     method: 'GET',
-                    url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
+                    url: 'http://127.0.0.1:3000/private/user/getReccomendedPOI',
                     headers: { 'x-auth-token': $window.sessionStorage.getItem('token') }
                 })
                     .then(function (response) {
