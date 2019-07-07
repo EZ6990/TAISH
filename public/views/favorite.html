@@ -22,9 +22,9 @@
                         </span>
                         {{poi.pos}}
                     </td>
-                    <td> <a ng-href="/show/{{poi.id}}">{{poi.Name}}</a></td>
+                    <td> <a ng-href="/show/{{poi.Id}}">{{poi.Name}}</a></td>
                     <td>{{poi.Categories[0].Name}}</td>
-                    <td><button class='btn btn-danger' ng-click="deleteRow(poi.Name)">Delete</button></td>
+                    <td><button class='btn btn-danger' ng-click="deleteRow(poi.Id)">Delete</button></td>
 
                 </tr>
             </tbody>

@@ -153,12 +153,11 @@ app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfI
     self.pointOfInterest = {};
     self.poiReviews = [];
 
-    $scope.range = function (num) {
-        var ratings = [];
-        for (var i = 0; i < num; i++) {
-            ratings.push(i)
-        }
-        console.log(ratings);
+    $scope.range = function(num){
+        var ratings = []; 
+        for (var i = 0; i < num; i++) { 
+          ratings.push(i) 
+        } 
         return ratings;
     };
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
@@ -209,8 +208,14 @@ app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function
 app.controller('favoriteController', ['UserService', '$scope', '$window', '$http', function (UserService, $scope, $window, $http) {
     let self = this;
     self.favPOI = [];
-    self.favPOI = UserService.getFavorites().then(function (response) {
+
+
+    UserService.getFavorites()
+    .then(function (response) {
         self.favPOI = response;
+        if(!$scope.$$phase){
+            $scope.$digest();
+        }
     });
 
     $scope.propertyName = 'pos';
@@ -221,37 +226,10 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
         $scope.propertyName = propertyName;
     };
 
-    $scope.deleteRow = function (name) {
-        var index = -1;
 
-        var comArr = eval(self.favPOI);
-        for (var i = 0; i < comArr.length; i++) {
-            if (comArr[i].Name === name) {
-                index = i;
-                self.POIId = comArr[i].id;
-                break;
-            }
-        }
-        if (index === -1) {
-            alert("Something gone wrong");
-        }
-        self.favPOI.splice(index, 1);
-        var req = {
-            method: 'DELETE',
-            url: 'http://127.0.0.1:3000/private/user/removeSavedPOI',
-            headers: {
-                'x-auth-token': $window.sessionStorage.getItem('token')
-                , "Content-Type": "application/json;charset=utf-8"
-            },
-            data: {
-                POIId: self.POIId
-            }
-        }
-        $http(req).then(function (result) {
-        }).catch(function (err) {
-            res.send(err)
-        })
 
+    $scope.deleteRow = function (poiId) {
+        UserService.removeFromFavorite(poiId);
     };
     $scope.saveOrder = function () {
         let order = [];
@@ -259,7 +237,7 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
             return a.pos - b.pos;
         });
         angular.forEach(self.favPOI, function (item) {
-            order.push(item.id);
+            order.push(item.Id);
         });
         UserService.saveNewOrder(order);
     };
@@ -302,16 +280,26 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
     }
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('searchController', ['PointOfInterestService', function (PointOfInterestService) {
+app.controller('searchController', ['PointOfInterestService','$scope','UserService', function (PointOfInterestService,$scope,UserService) {
     let self = this;
     self.searchResults = [];
     self.categoriesPossibleFilter = [];
     self.categoriesFilter = {};
     self.pointsOfInterest = [];
+    self.isLoggedIn = UserService.isLoggedIn;
+    
+    $scope.range = function(num){
+        var ratings = []; 
+        for (var i = 0; i < num; i++) { 
+          ratings.push(i) 
+        } 
+        return ratings;
+    };
+
     PointOfInterestService.getPointsOfInterest()
-        .then(function (result) {
-            self.pointsOfInterest = result;
-        });
+    .then(function (result) {
+        self.pointsOfInterest = result;
+    });
 
     self.search = function (name) {
         self.searchResults = [];
@@ -337,6 +325,21 @@ app.controller('searchController', ['PointOfInterestService', function (PointOfI
             });
         });
     }
+
+    self.removeFromFavorite = function (poiId){
+        UserService.removeFromFavorite(poiId);
+    };
+    self.addToFavorite = function (poiId){
+        UserService.addToFavorite(poiId)
+        .then(function(response){
+            // if(!$scope.$$phase){
+            //     $scope.$digest();
+            // }
+        })
+    };
+    self.isInFavorite = function (poiId){
+        return UserService.isInFavorite(poiId);
+    };
     self.filterByCategory = function (pointOfInterest) {
         for (i = 0; i < pointOfInterest.Categories.length; i++) {
             var category = pointOfInterest.Categories[i];
@@ -346,15 +349,17 @@ app.controller('searchController', ['PointOfInterestService', function (PointOfI
             return false;
         };
     };
+
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', function ($http, $window, PointOfInterestModel) {
+app.factory('UserService', ['$http', '$window', 'PointOfInterestModel','PointOfInterestService', function ($http, $window, PointOfInterestModel,PointOfInterestService) {
     let service = {};
 
     let self = this;
-    self.pointsOfInterest = [];
-
+    self.currentUser = {};
+    self.currentUser.favorites = [];
     service.isLoggedIn = false;
+    
     service.login = function (user) {
         let data = {
             username: user.username,
@@ -373,28 +378,40 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', function
                 'user': user.username
             };
             service.isLoggedIn = true;
-            return Promise.resolve(response);
-        }, function (error) {
-            return Promise.reject(e);
+            return service.getFavorites();
+        })
+        .then(function (response){
+            
+        })
+        .catch(function (error) {
+            return Promise.reject(error);
         });
     };
     service.getFavorites = function () {
         if (service.isLoggedIn) {
+            if (self.currentUser.favorites.length == 0){
             return $http({
-                method: 'GET',
-                url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
-                headers: { 'x-auth-token': $window.sessionStorage.getItem('token') }
-            })
+                    method: 'GET',
+                    url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
+                    headers: { 'x-auth-token': $window.sessionStorage.getItem('token') }
+                })
                 .then(function (response) {
-                    self.pointsOfInterest = [];
+                    self.currentUser.favorites = [];
                     let i = 1;
                     angular.forEach(response.data, function (poi) {
                         poi["pos"] = i;
                         i++;
-                        self.pointsOfInterest.push(new PointOfInterestModel(poi));
+                        self.currentUser.favorites.push(new PointOfInterestModel(poi));
                     });
-                    return self.pointsOfInterest;
+                    return self.currentUser.favorites;
                 })
+            }
+            else{
+                return Promise.resolve(self.currentUser.favorites);
+            }
+        }
+        else{
+            return Promise.reject("User not logged in");
         }
     };
     service.saveNewOrder = function (poiArr) {
@@ -412,8 +429,85 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', function
         }).catch(function (err) {
             res.send(err)
         })
-
     };
+    service.addToFavorite = function (poiId) {
+
+        var ans = service.isInFavorite(poiId);
+        if(ans[0])
+            return Promise.reject("already in favorites");
+            
+        var req = {
+            method: 'POST',
+            url: 'http://127.0.0.1:3000/private/user/savePOI',
+            headers: {
+                'x-auth-token': $window.sessionStorage.getItem('token'),
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            data: {
+                POIId: poiId
+            }
+        }
+        return $http(req)
+        .then(function (result) {
+            return PointOfInterestService.getPointOfInterestById(poiId);
+        })
+        .then(function(poi){
+            newpoi = new PointOfInterestModel(poi);
+            newpoi["pos"] = self.currentUser.favorites.length + 1;
+
+            console.log(self.currentUser.favorites);
+            self.currentUser.favorites.push(newpoi);
+            console.log(self.currentUser.favorites);
+
+            return self.currentUser.favorites;
+        })
+        .catch(function (err) {
+            return Promise.reject(err);
+
+        })
+    };
+    service.removeFromFavorite = function (poiId) {
+
+
+        favorites = self.currentUser.favorites;
+        var ans = service.isInFavorite(poiId);
+        if(!ans[0])
+            return Promise.reject(favorites[ans[1]].Name + " not in favorites");
+
+        console.log(favorites);
+        for (var i = 0; i < favorites.length; i++)
+            if (favorites[ans[1]].pos < favorites[i].pos)
+                favorites[i].pos--;
+
+                
+        favorites.splice(ans[1], 1);
+        
+        var req = {
+            method: 'DELETE',
+            url: 'http://127.0.0.1:3000/private/user/removeSavedPOI',
+            headers: {
+                'x-auth-token': $window.sessionStorage.getItem('token')
+                , "Content-Type": "application/json;charset=utf-8"
+            },
+            data: {
+                POIId: poiId
+            }
+        }
+        $http(req).then(function (result) {
+        }).catch(function (err) {
+            res.send(err)
+        })
+    };
+    service.isInFavorite = function(poiId){
+        var favorites = self.currentUser.favorites;
+        for (var i = 0; i < favorites.length; i++) {
+            if (favorites[i].Id === poiId) {
+                return [true,i];
+            }
+        }
+        return [false,-1];
+    };
+    service.login({ username: "admin", password: "Password1" });
     return service;
 }]);
 //-------------------------------------------------------------------------------------------------------------------

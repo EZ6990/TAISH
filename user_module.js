@@ -131,13 +131,13 @@ router.get('/getSavedPOI', function (req, res) {
     const user_data = {
         username: req.decoded.username,
     };
-    DButilsAzure.execQuery("SELECT poi.id,poi.Name,poi.Rate,poi.Description,poi.Picture FROM FavoritePointsOfInterest fpoi JOIN PointsOfInterest poi ON (poi.Id = fpoi.PointOfInterestId) Where fpoi.UserId = '" + user_data.username + "' ORDER BY fpoi.Priorety ASC")
+    DButilsAzure.execQuery("SELECT poi.Id,poi.Name,poi.Rate,poi.Description,poi.Picture FROM FavoritePointsOfInterest fpoi JOIN PointsOfInterest poi ON (poi.Id = fpoi.PointOfInterestId) Where fpoi.UserId = '" + user_data.username + "' ORDER BY fpoi.Priorety ASC")
         .then(function (result) {
             let allpromisess = [];
             for (index = 0; index < result.length; index++) {
                 let row = result[index];
                 allpromisess.push(row)
-                allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['id']))
+                allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['Id']))
             }
             Promise.all(allpromisess).then(function (data) {
                 let FavoritePointOfInterest = [];
