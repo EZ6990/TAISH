@@ -34,15 +34,18 @@
                 <div class="d-flex flex-row ">
                     <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
                     <div class="d-flex flex-column ml-3">
-                        <span class="flex-fill">Name {{poi.Name}}</span>
+                        <span class="flex-fill">{{poi.Name}}</span>
                         <div class="flex-fill d-inline-flex">
-                            <span class="text-black-50">Rate {{poi.Rate}}%</span>
+                            <span class="text-black-50">{{poi.Rate}}%</span>
                             <span class="fa fa-star text-warning" ng-repeat="i in range(((poi.Rate)/100)*5)"></span>
                             <span class="fa fa-star text-light" ng-repeat="i in range(5 - ((poi.Rate)/100) *5)"></span>
                         </div>
                     </div>
                 </div>
             </a>
-            <a ng-herf="#"" ng-click=""><i class="fas fa-heart"></i></a>
+            <div ng-show="searchCtrl.isLoggedIn">
+                <a ng-hide="searchCtrl.isInFavorite({{poi.Id}})[0]" ng-herf="#" ng-click="searchCtrl.addToFavorite(poi.Id)"><i class="fas fa-heart"></i></a>
+                <a ng-show="searchCtrl.isInFavorite({{poi.Id}})[0]" ng-herf="#" ng-click="searchCtrl.removeFromFavorite(poi.Id)"><i class="text-danger fas fa-heart"></i></a>
+            </div>
         </div>
 </div>
