@@ -164,16 +164,16 @@ app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfI
         return ratings;
     };
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
-    .then(function(poi){
-        self.pointOfInterest = poi;
-        return self.pointOfInterest.getReviews();
-    })
-    .then(function(reviews){
-        self.poiReviews = reviews;
-        // if(!$scope.$$phase){
-        //     $scope.$digest();
-        // }
-    });
+        .then(function (poi) {
+            self.pointOfInterest = poi;
+            return self.pointOfInterest.getReviews();
+        })
+        .then(function (reviews) {
+            self.poiReviews = reviews;
+            // if(!$scope.$$phase){
+            //     $scope.$digest();
+            // }
+        });
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function ($http, PointOfInterestModel) {
@@ -213,10 +213,9 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
     self.favPOI = [];
     self.favPOI = UserService.getFavorites().then(function (response) {
         self.favPOI = response;
-        console.log(response);
     });
 
-    $scope.propertyName = 'index';
+    $scope.propertyName = 'pos';
     $scope.reverse = false;
     $scope.favPOI = self.favPOI;
     $scope.sortBy = function (propertyName) {
@@ -238,7 +237,6 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
         if (index === -1) {
             alert("Something gone wrong");
         }
-
         self.favPOI.splice(index, 1);
         var req = {
             method: 'DELETE',
@@ -257,6 +255,16 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
         })
 
     };
+    $scope.saveOrder = function () {
+        let order = [];
+        self.favPOI.sort(function (a, b) {
+            return a.pos - b.pos;
+        });
+        angular.forEach(self.favPOI, function (item) {
+            order.push(item.id);
+        });
+        UserService.saveNewOrder(order);
+    };
     $scope.goUp = function (pos) {
         var max = 0;
         var comArr = eval(self.favPOI);
@@ -274,9 +282,10 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
                 }
             }
         }
+
     }
     $scope.goDown = function (pos) {
-        var min =  Number.MAX_SAFE_INTEGER;
+        var min = Number.MAX_SAFE_INTEGER;
         var comArr = eval(self.favPOI);
         for (var i = 0; i < comArr.length; i++) {
             if (parseInt(self.favPOI[i].pos) < min)
@@ -284,11 +293,11 @@ app.controller('favoriteController', ['UserService', '$scope', '$window', '$http
         }
         if (pos > min) {
             for (var i = 0; i < comArr.length; i++) {
-                if (self.favPOI[i].pos === pos -1) {
+                if (self.favPOI[i].pos === pos - 1) {
                     self.favPOI[i].pos = pos;
                 }
                 else if (self.favPOI[i].pos === pos) {
-                    self.favPOI[i].pos = self.favPOI[i].pos -1;
+                    self.favPOI[i].pos = self.favPOI[i].pos - 1;
                 }
             }
         }
@@ -396,6 +405,23 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', function
                     return self.pointsOfInterest;
                 })
         }
+    };
+    service.saveNewOrder = function (poiArr) {
+        var req = {
+            method: 'PUT',
+            url: 'http://127.0.0.1:3000/private/user//insertDefaultPOIOrder',
+            headers: {
+                'x-auth-token': $window.sessionStorage.getItem('token')
+            },
+            data: {
+                POIId: poiArr
+            }
+        }
+        $http(req).then(function (result) {
+        }).catch(function (err) {
+            res.send(err)
+        })
+
     };
     return service;
 }]);

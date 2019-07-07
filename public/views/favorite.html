@@ -3,28 +3,32 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th ng-click="sortBy('index')">Index</th>
-                    <th ng-click="sortBy('Name')">POI name</th>
-                    <th ng-click="sortBy('Category')">Category</th>
-                    <th>Sort</th>
-                    <th>   </th>
+                    <th ng-click="sortBy('pos')" class="hovered">Index<i class="fas fa-sort ml-1"></i></th>
+                    <th ng-click="sortBy('Name')" class="hovered">POI name<i class="fas fa-sort ml-1"></i></th>
+                    <th ng-click="sortBy('Category')" class="hovered">Category<i class="fas fa-sort ml-1"></i></th>
+                    <th>                </th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-model="favCtrl.favPOI" ng-repeat="poi in favCtrl.favPOI | orderBy:propertyName:reverse">
-                    <td>{{poi.pos}}</td>
-                    <td>{{poi.Name}}</td>
-                    <td>{{poi.Categories[0].Name}}</td>
-                    <td class="pt-3-half">
-                        <span class="table-up"><a href="#!" class="indigo-text" ng-click="goUp(poi.pos)"><i class="fas fa-long-arrow-alt-up"
-                                    aria-hidden="true"></i></a></span>
-                        <span class="table-down"><a href="#!" class="indigo-text" ng-click="goDown(poi.pos)"><i class="fas fa-long-arrow-alt-down"
-                                    aria-hidden="true"></i></a></span>
+                    <td>
+                        <span class="table-up"><a href="#!" class="indigo-text" ng-click="goDown(poi.pos)"><i
+                                    class="fas fa-long-arrow-alt-up" aria-hidden="true"></i>
+                            </a>
+                        </span>
+                        <span class="table-down"><a href="#!" class="indigo-text" ng-click="goUp(poi.pos)"><i
+                                    class="fas fa-long-arrow-alt-down" aria-hidden="true"></i>
+                            </a>
+                        </span>
+                        {{poi.pos}}
                     </td>
+                    <td> <a ng-href="/show/{{poi.id}}">{{poi.Name}}</a></td>
+                    <td>{{poi.Categories[0].Name}}</td>
                     <td><button class='btn btn-danger' ng-click="deleteRow(poi.Name)">Delete</button></td>
 
                 </tr>
             </tbody>
         </table>
+        <button type="button"  class="btn btn-outline-success" ng-click="saveOrder()">Save new order</button>
     </div>
 </div>
