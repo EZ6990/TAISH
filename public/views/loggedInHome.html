@@ -1,0 +1,41 @@
+<div class="loggedInHome-container" ng-controller="loggedInController as liCtrl">
+
+    <p>hello {{liCtrl.username}}</p>
+    <div ng-hide="liCtrl.hasFav">
+        <p>
+            <h1>youre recent saved points</h1>
+        </p>
+        <div>
+            <div class="d-flex flex-row list-group-item list-group-item-action align-items-center"
+                ng-repeat="poi in liCtrl.favPOI | orderBy:'Rate':bOrderbyRate.descending track by poi.Id">
+                <a ng-href="/show/{{poi.Id}}" class="flex-grow-1 list-group-item-action">
+                    <div class="d-flex flex-row ">
+                        <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
+                        <div class="d-flex flex-column ml-3">
+                            <span class="flex-fill">{{poi.Name}}</span>
+                            <span class="text-black-50">{{poi.Rate}}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <p>
+        <h1>recommende for you!</h1>
+    </p>
+    <div class="d-flex flex-row list-group-item list-group-item-action align-items-center"
+        ng-repeat="poi in liCtrl.randArr | orderBy:'Rate':bOrderbyRate.ascending track by $index">
+        <a ng-href="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block">
+            <div class="d-flex flex-row">
+                <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
+                <div class="d-flex flex-column ml-3">
+                    <span class="flex-fill">Name {{poi.Name}}</span>
+                    <span class="flex-fill text-black-50">Rate {{poi.Rate}}</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>
