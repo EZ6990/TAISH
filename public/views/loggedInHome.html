@@ -1,7 +1,7 @@
 <div class="loggedInHome-container" ng-controller="loggedInController as liCtrl">
 
     <p>hello {{liCtrl.username}}</p>
-    <div ng-hide="liCtrl.hasFav">
+    <div ng-show="liCtrl.hasFav">
         <p>
             <h1>youre recent saved points</h1>
         </p>
@@ -23,10 +23,10 @@
 
 
     <p>
-        <h1>recommende for you!</h1>
+        <h1>recommended for you!</h1>
     </p>
     <div class="d-flex flex-row list-group-item list-group-item-action align-items-center"
-        ng-repeat="poi in liCtrl.randArr | orderBy:'Rate':bOrderbyRate.ascending track by $index">
+        ng-repeat="poi in liCtrl.reqPOI | orderBy:'Rate':bOrderbyRate.ascending track by $index">
         <a ng-href="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block">
             <div class="d-flex flex-row">
                 <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">

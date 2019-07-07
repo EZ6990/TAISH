@@ -23,6 +23,7 @@ app.controller('welcomeController', ['UserService', 'PointOfInterestService', '$
         })
 
 }]);
+
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('mainController', ['UserService', function (UserService) {
     let vm = this;
@@ -218,9 +219,8 @@ app.controller('loggedInController', ['UserService', '$window', function (UserSe
 
     UserService.getRecommended()
         .then(function (response) {
-
-            self.reqPOI.push(response[response.length - 1]);
-            self.reqPOI.push(response[response.length - 2]);
+            self.reqPOI.push(response[0]);
+            self.reqPOI.push(response[1]);
         });
 
 }]);
@@ -438,12 +438,13 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
             return Promise.reject("User not logged in");
         }
     };
+
     service.getRecommended = function () {
         if (service.isLoggedIn) {
             if (self.currentUser.favorites.length == 0) {
                 return $http({
                     method: 'GET',
-                    url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
+                    url: 'http://127.0.0.1:3000/private/user/getReccomendedPOI',
                     headers: { 'x-auth-token': $window.sessionStorage.getItem('token') }
                 })
                     .then(function (response) {
