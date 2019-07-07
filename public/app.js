@@ -20,6 +20,9 @@ app.controller('welcomeController', ['UserService', 'PointOfInterestService', '$
             for (let index = 0; index < randNum; index++) {
                 self.randArr[index] = result[Math.floor(Math.random() * result.length)];
             }
+            if(!$scope.$$phase){
+                $scope.$digest();
+            }
         })
 
 }]);

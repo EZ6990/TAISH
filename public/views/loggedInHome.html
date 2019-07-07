@@ -1,10 +1,31 @@
 <div class="loggedInHome-container" ng-controller="loggedInController as liCtrl">
 
-    <p>hello {{liCtrl.username}}</p>
-    <div ng-show="liCtrl.hasFav">
+    <div class="jumbotron text-center bg-primary text-white" style="margin-bottom:0">
+        <h3>Hello {{liCtrl.username}}</h3>
         <p>
-            <h1>youre recent saved points</h1>
+            <h1>Recommended For You!</h1>
         </p>
+    </div>
+
+    <div class="d-flex flex-row list-group-item list-group-item-action align-items-center"
+        ng-repeat="poi in liCtrl.reqPOI | orderBy:'Rate':bOrderbyRate.ascending track by $index">
+        <a ng-href="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block">
+            <div class="d-flex flex-row">
+                <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
+                <div class="d-flex flex-column ml-3">
+                    <span class="flex-fill">Name {{poi.Name}}</span>
+                    <span class="flex-fill text-black-50">Rate {{poi.Rate}}</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+
+    <div ng-show="liCtrl.hasFav" class="jumbotron text-center  bg-primary text-white" style="margin-bottom:0">
+        <p>
+            <h1>Recently Saved</h1>
+        </p>
+    </div>
         <div>
             <div class="d-flex flex-row list-group-item list-group-item-action align-items-center"
                 ng-repeat="poi in liCtrl.favPOI | orderBy:'Rate':bOrderbyRate.descending track by poi.Id">
@@ -19,21 +40,13 @@
                 </a>
             </div>
         </div>
+ 
+
+    <div >
+
+    <div ng-hide="liCtrl.hasFav" class="jumbotron text-center bg-warning text-white" style="margin-bottom:0">
+        <h2>Save Some Places For Later Use!</h2>
     </div>
-    <p>
-        <h1>recommended for you!</h1>
-    </p>
-    <div class="d-flex flex-row list-group-item list-group-item-action align-items-center"
-        ng-repeat="poi in liCtrl.reqPOI | orderBy:'Rate':bOrderbyRate.ascending track by $index">
-        <a ng-href="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block">
-            <div class="d-flex flex-row">
-                <img class="d-inline-block" ng-src={{poi.Picture}} width="50" height="50">
-                <div class="d-flex flex-column ml-3">
-                    <span class="flex-fill">Name {{poi.Name}}</span>
-                    <span class="flex-fill text-black-50">Rate {{poi.Rate}}</span>
-                </div>
-            </div>
-        </a>
-    </div>
+    
 
 </div>

@@ -1,9 +1,13 @@
 <div class="welcome-container" ng-controller="welcomeController as welCtrl">
-    <h3>hello guest</h3>
+    
 
-    <p>
-        <h1>explore our beautiful places</h1>
-    </p>
+
+    <div class="jumbotron text-center bg-info text-white" style="margin-bottom:0">
+            <h3>Hello Guest</h3>
+        <p>
+            <h1>Explore & Enjoy</h1>
+        </p>
+    </div>
     <div class="d-flex flex-row list-group-item list-group-item-action align-items-center"
         ng-repeat="poi in welCtrl.randArr | orderBy:'Rate':bOrderbyRate.ascending track by $index">
         <a ng-href="/show/{{poi.Id}}" class="list-group-item list-group-item-action inline-block">
@@ -18,5 +22,5 @@
     </div>
 
 
- 
+
 </div>
