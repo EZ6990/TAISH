@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </a>
-            <div ng-show="searchCtrl.isLoggedIn">
+            <div ng-if="searchCtrl.isLoggedIn">
                 <a ng-hide="searchCtrl.isInFavorite({{poi.Id}})[0]" ng-herf="#" ng-click="searchCtrl.addToFavorite(poi.Id)"><i class="fas fa-heart"></i></a>
                 <a ng-show="searchCtrl.isInFavorite({{poi.Id}})[0]" ng-herf="#" ng-click="searchCtrl.removeFromFavorite(poi.Id)"><i class="text-danger fas fa-heart"></i></a>
             </div>

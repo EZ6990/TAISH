@@ -34,19 +34,33 @@
             <li class="nav-item">
                 <a class="nav-link" ng-href="/register" ng-hide="mainCtrl.userService.isLoggedIn">register</a>
             </li>
-            <li>
+            <!-- <li>
                 <span ng-show="mainCtrl.userService.isLoggedIn">
                     <a class="nav-link" ng-href="/favorites">favorites</a>
                 </span>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <span>
                     <a class="nav-link" ng-href="/search">search</a>
                 </span>
             </li>
             </div>
+            <div class="nav-item btn-group ml-auto" ng-if="mainCtrl.userService.isLoggedIn">
+                <a ng-href="/favorites" class="nav-item btn btn-link">
+                    <i class="fas fa-heart text-light"></i>
+                    <span class="badge">{{mainCtrl.numInFavorites}}</span>
+                </a>
+                <!-- <a class="dropdown-toggle" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user"></i>
+                    <span class="badge badge-primary">{{mainCtrl.numInFavorites}}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg-right">
+                    <button class="dropdown-item" type="button">Action</button>
+                    <button class="dropdown-item" type="button">Another action</button>
+                    <button class="dropdown-item" type="button">Something else here</button>
+                </div> -->
+                  </div>
         </nav>
-        </div>
     </div>
     <div class="mt-5 pt-5">
         <ng-view></ng-view>

@@ -25,10 +25,23 @@ app.controller('welcomeController', ['UserService', 'PointOfInterestService', '$
 }]);
 
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('mainController', ['UserService', function (UserService) {
+app.controller('mainController', ['UserService','$scope', function (UserService,$scope) {
     let vm = this;
     vm.userService = UserService;
+    vm.numInFavorites = 0;
     vm.homeUrl = { false: "/", true: "/userHome" };
+
+    vm.FavoritesChanges = function(){
+        return vm.userService.getFavorites()
+        .then(function (favorites){
+            vm.numInFavorites =  favorites.length;
+            if(!$scope.$$phase){
+                $scope.$digest();
+            }
+        })
+    }
+    UserService.addFavoritesObservers(vm.FavoritesChanges)
+
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -98,7 +111,6 @@ app.controller('registerController', ['questionServirce', '$http',
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('loginController', ['UserService', 'questionServirce', '$location', '$window', '$scope', '$http',
     function (UserService, questionServirce, $location, $window, $scope, $http) {
-        console.log("asfd");
         let self = this;
         $scope.forgotSection = false;
         self.user2 = { username: "admin", password: "Password1" };
@@ -163,9 +175,9 @@ app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfI
         })
         .then(function (reviews) {
             self.poiReviews = reviews;
-            // if(!$scope.$$phase){
-            //     $scope.$digest();
-            // }
+            if(!$scope.$$phase){
+                $scope.$digest();
+            }
         });
 }]);
 //-------------------------------------------------------------------------------------------------------------------
@@ -201,7 +213,7 @@ app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function
 
 }]);
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('loggedInController', ['UserService', '$window', function (UserService, $window) {
+app.controller('loggedInController', ['UserService', '$window','$scope', function (UserService, $window,$scope) {
     let self = this;
     self.username = $window.sessionStorage.getItem('username');
     self.favPOI = [];
@@ -210,17 +222,24 @@ app.controller('loggedInController', ['UserService', '$window', function (UserSe
 
     UserService.getFavorites()
         .then(function (response) {
+            
             self.hasFav=response.length>0;
-            console.log(self.hasFav);
             self.favPOI.push(response[response.length - 1]);
             self.favPOI.push(response[response.length - 2]);
 
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
         });
 
     UserService.getRecommended()
         .then(function (response) {
             self.reqPOI.push(response[0]);
             self.reqPOI.push(response[1]);
+
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
         });
 
 }]);
@@ -351,11 +370,11 @@ app.controller('searchController', ['PointOfInterestService', '$scope', 'UserSer
     };
     self.addToFavorite = function (poiId) {
         UserService.addToFavorite(poiId)
-            .then(function (response) {
-                // if(!$scope.$$phase){
-                //     $scope.$digest();
-                // }
-            })
+        .then(function(response){
+            if(!$scope.$$phase){
+                $scope.$digest();
+            }
+        })
     };
     self.isInFavorite = function (poiId) {
         return UserService.isInFavorite(poiId);
@@ -376,6 +395,7 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
     let service = {};
 
     let self = this;
+    self.favoritesObservers = [];
     self.currentUser = {};
     self.currentUser.favorites = [];
     self.currentUser.favorites = [];
@@ -394,16 +414,17 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
             method: 'POST',
             url: 'http://127.0.0.1:3000/public/login',
             data: data
-        }).then(function (response) {
-            let token = response.data;
-            $window.sessionStorage.setItem('token', token);
-            $http.defaults.headers.common = {
-                'x-auth-token': token,
-                'user': user.username
-            };
-            service.isLoggedIn = true;
-            return service.getFavorites();
-        })
+            })
+            .then(function (response) {
+                let token = response.data;
+                $window.sessionStorage.setItem('token', token);
+                $http.defaults.headers.common = {
+                    'x-auth-token': token,
+                    'user': user.username
+                };
+                service.isLoggedIn = true;
+                return service.getFavorites();
+            })
             .then(function (response) {
 
             })
@@ -419,16 +440,17 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
                     url: 'http://127.0.0.1:3000/private/user/getSavedPOI',
                     headers: { 'x-auth-token': $window.sessionStorage.getItem('token') }
                 })
-                    .then(function (response) {
-                        self.currentUser.favorites = [];
-                        let i = 1;
-                        angular.forEach(response.data, function (poi) {
-                            poi["pos"] = i;
-                            i++;
-                            self.currentUser.favorites.push(new PointOfInterestModel(poi));
-                        });
-                        return self.currentUser.favorites;
-                    })
+                .then(function (response) {
+                    self.currentUser.favorites = [];
+                    let i = 1;
+                    angular.forEach(response.data, function (poi) {
+                        poi["pos"] = i;
+                        i++;
+                        self.currentUser.favorites.push(new PointOfInterestModel(poi));
+                    });
+                    self.notifyFavoritesChanges();
+                    return self.currentUser.favorites;
+                })
             }
             else {
                 return Promise.resolve(self.currentUser.favorites);
@@ -501,15 +523,14 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
                 newpoi = new PointOfInterestModel(poi);
                 newpoi["pos"] = self.currentUser.favorites.length + 1;
 
-                console.log(self.currentUser.favorites);
-                self.currentUser.favorites.push(newpoi);
-                console.log(self.currentUser.favorites);
-
-                return self.currentUser.favorites;
-            })
-            .catch(function (err) {
-                return Promise.reject(err);
-
+            console.log(self.currentUser.favorites);
+            self.currentUser.favorites.push(newpoi);
+            console.log(self.currentUser.favorites);
+            self.notifyFavoritesChanges();
+            return self.currentUser.favorites;
+        })
+        .catch(function (err) {
+            return Promise.reject(err);
             })
     };
     service.removeFromFavorite = function (poiId) {
@@ -540,6 +561,7 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
             }
         }
         $http(req).then(function (result) {
+            self.notifyFavoritesChanges();
         }).catch(function (err) {
             res.send(err)
         })
@@ -552,6 +574,14 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
             }
         }
         return [false, -1];
+    };
+    service.addFavoritesObservers = function(callback){
+        self.favoritesObservers.push(callback);
+    };
+    self.notifyFavoritesChanges = function(){
+        angular.forEach(self.favoritesObservers, function(callback){
+            callback();
+        });
     };
     //service.login({ username: "admin", password: "Password1" });
     return service;
