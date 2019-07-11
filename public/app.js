@@ -2,11 +2,58 @@
  * Created by Hasidi on 18/06/2017.
  */
 let app = angular.module('myApp', ['ngRoute', 'LocalStorageModule']);
-
 //-------------------------------------------------------------------------------------------------------------------
 app.config(function (localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('node_angular_App');
 });
+
+app.controller('myModalController', ['$scope','UserService', function($scope,UserService) {
+
+    $scope.range = function (num) {
+        var ratings = [];
+        for (var i = 0; i < num; i++) {
+            ratings.push(i)
+        }
+        return ratings;
+    };
+
+    
+
+    var self = this;
+    self.rate = -1;
+    self.details = "";
+
+    self.insertReview =  function(poiId,rate,details){
+        UserService.insertReview(poiId,rate,details)
+            .then(
+                function(result){
+                    $('.modal').modal('hide');
+            })
+            .catch(function(error){
+                console.log(error)
+            });
+    };
+    
+
+}]);
+app.directive('myCustomer', function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'public/views/reviewModal.html',
+      scope: {
+        poi: '=lolo'
+      },
+      transclude: true,
+      controller: 'myModalController as modalCtrl',
+      link: function (scope, ele, attrs) {
+            $(ele).find('.trans-layer').on('click', function (event) {
+                scope.$apply();
+                //window.location.href = "#!home";
+
+            })
+        }
+    };
+  });
 //-------------------------------------------------------------------------------------------------------------------
 app.controller('welcomeController', ['UserService', 'PointOfInterestService', '$scope', function (UserService, PointOfInterestService, $scope) {
     let self = this;
@@ -159,10 +206,11 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
 
 
 //-------------------------------------------------------------------------------------------------------------------
-app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfInterestService', function ($scope, $routeParams, PointOfInterestService) {
+app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfInterestService', 'UserService', function ($scope, $routeParams, PointOfInterestService,UserService) {
     let self = this;
     self.pointOfInterest = {};
     self.poiReviews = [];
+    self.isLoggedIn = UserService.isLoggedIn;
 
     $scope.range = function (num) {
         var ratings = [];
@@ -174,14 +222,35 @@ app.controller('pointOfInterestController', ['$scope', '$routeParams', 'PointOfI
     PointOfInterestService.getPointOfInterestById($routeParams.poiId)
         .then(function (poi) {
             self.pointOfInterest = poi;
+            console.log(poi);
             return self.pointOfInterest.getReviews();
         })
         .then(function (reviews) {
             self.poiReviews = reviews;
+            console.log(reviews);
             if(!$scope.$$phase){
                 $scope.$digest();
             }
+            return true;
+        })
+        .then(function(succeed){
+            self.pointOfInterest.increaseVisits();
         });
+
+    self.removeFromFavorite = function (poiId) {
+        UserService.removeFromFavorite(poiId);
+    };
+    self.addToFavorite = function (poiId) {
+        UserService.addToFavorite(poiId)
+        .then(function(response){
+            if(!$scope.$$phase){
+                $scope.$digest();
+            }
+        })
+    };
+    self.isInFavorite = function (poiId) {
+        return UserService.isInFavorite(poiId);
+    };
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 app.service('PointOfInterestService', ['$http', 'PointOfInterestModel', function ($http, PointOfInterestModel) {
@@ -534,6 +603,30 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
         })
         .catch(function (err) {
             return Promise.reject(err);
+            })
+    };
+    service.insertReview = function (poiId,rate,details) {
+
+
+        var req = {
+            method: 'POST',
+            url: 'http://127.0.0.1:3000/private/user/insertReview',
+            headers: {
+                'x-auth-token': $window.sessionStorage.getItem('token'),
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            data: {
+                POIId: poiId,
+                Rate: rate,
+                Details: details
+            }
+        }
+        return $http(req)
+            .then(function (result) {
+                return result;
+            })
+            .catch(function (err) {
+                return Promise.reject(err);
             })
     };
     service.removeFromFavorite = function (poiId) {

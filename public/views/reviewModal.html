@@ -1,0 +1,32 @@
+<div class="container">
+    <button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#modal_{{poi.Id}}" ng-click="hidden = false">
+        <i class="fas fa-star-half-alt">rate</i>
+    </button>
+    <div class="modal fade hide" id="modal_{{poi.Id}}" role="dialog" >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Review</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Details</span>
+                </div>
+                <input ng-model="modalCtrl.details" type="text" class="form-control">
+            </div>
+            <div class="input-group" ng-hide="modalCtrl.details.length == 0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Rate</span>
+                </div>
+                <span ng-model="modalCtrl.rate" ng-mouseleave="modalCtrl.rate=-1"><i ng-mouseenter="modalCtrl.rate=$index" ng-repeat="i in range(5)" ng-class="[{'text-warning': $index <= modalCtrl.rate}]" class="fa fa-star" ng-click="modalCtrl.insertReview(poi.Id,modalCtrl.rate + 1,modalCtrl.details)"></i></span>
+            </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

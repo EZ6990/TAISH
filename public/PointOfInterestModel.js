@@ -13,6 +13,23 @@ app.factory('PointOfInterestModel', ['$http', function($http) {
                     return reviews.data;
             });
         },
+        increaseVisits: function() {
+            var req = {
+                method: 'PUT',
+                url: 'http://127.0.0.1:3000/public/POIViewIncrease',
+                data: {
+                    POIId: this.Id
+                }
+            }
+            return $http(req)
+                .then(function (result) {
+                    return result;
+                })
+                .catch(function (err) {
+                    return Promise.reject(err);
+                })
+    },
+        
     };
     return PointOfInterestModel;
 }]);
