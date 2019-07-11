@@ -156,7 +156,7 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
         }
         $http(req).then(function (result) {
         }).catch(function (err) {
-            res.send(err)
+            return err;
         })
     };
     service.addToFavorite = function (poiId) {
@@ -245,7 +245,7 @@ app.factory('UserService', ['$http', '$window', 'PointOfInterestModel', 'PointOf
         $http(req).then(function (result) {
             self.notifyFavoritesChanges();
         }).catch(function (err) {
-            res.send(err)
+            return err;
         })
     };
     service.isInFavorite = function (poiId) {

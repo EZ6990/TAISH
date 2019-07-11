@@ -20,7 +20,7 @@ app.config(['$routeProvider', function ($routeProvider) {
             templateUrl: "views/loggedInHome.html",
         })
         .when("/login", {
-            templateUrl: "views/tmplogin.html",
+            templateUrl: "views/login.html",
         })
         .when("/register", {
             templateUrl: "views/register.html",

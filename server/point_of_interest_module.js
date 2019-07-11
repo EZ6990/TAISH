@@ -27,7 +27,7 @@ router.get('/getALLPOI', function (req, res) {
                 res.send(FavoritePointOfInterest);
             })
                 .catch(function (err) {
-                    res.send(err)
+                    res.status(400).send(err)
                 })
         })
 });
@@ -38,7 +38,7 @@ router.put('/POIViewIncrease', function (req, res) {
             res.sendStatus(200)
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 })
 
@@ -62,7 +62,7 @@ router.get('/getPOI/:POIId', function (req, res) {
             })
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 
 });
@@ -78,7 +78,7 @@ router.get('/getPOIReviews/:POIId/:integer', function (req, res) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 });
 
@@ -88,7 +88,7 @@ router.get('/getAllCategories', function (req, res) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 });
 

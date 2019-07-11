@@ -15,7 +15,7 @@ router.put('/insertDefaultPOIOrder', function (req, res) {
                 i++;
             })
             .catch(function (err) {
-                res.send(err)
+                res.status(400).send(err)
             })
     }
     res.sendStatus(200);
@@ -30,7 +30,7 @@ router.post('/insertReview', function (req, res, next) {
             next();
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 
 });
@@ -43,7 +43,7 @@ router.post('/insertReview', function (req, res) {
                     res.sendStatus(200)
                 })
                 .catch(function (err) {
-                    res.send(err)
+                    res.status(400).send(err)
                 })
         })
 });
@@ -57,11 +57,11 @@ router.post('/savePOI', function (req, res) {
                     res.sendStatus(200)
                 })
                 .catch(function (err) {
-                    res.send(err)
+                    res.status(400).send(err)
                 })
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 });
 
@@ -78,7 +78,7 @@ router.delete('/removeSavedPOI', function (req, res) {
             res.sendStatus(200)
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 
 });
@@ -110,7 +110,7 @@ router.get('/getReccomendedPOI', function (req, res) {
             })
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 })
 
@@ -137,7 +137,7 @@ router.get('/getSavedPOI', function (req, res) {
             })
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 })
 

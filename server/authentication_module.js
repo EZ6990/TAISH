@@ -28,7 +28,7 @@ router.post("/login", (req, res) => {
         }
     })
     .catch(function(err){
-        res.send(err)
+        res.status(400).send(err)
     })
 });
 
@@ -46,7 +46,7 @@ router.post('/restorePassword', function (req, res) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 })
 
@@ -73,6 +73,7 @@ router.post('/registerClient', function (req, res) {
     DButilsAzure.execQuery("INSERT INTO Users (Username,Password,Firstname,Lastname,City,Country,Email,SecurityQuestion1,SecurityAnswer1,SecurityQuestion2,SecurityAnswer2)"
         + " VALUES ('" + user_data.username + "','" + user_data.password + "','" + user_data.firstname + "','" + user_data.lastname + "','" + user_data.city + "'," + user_data.country + ",'" + user_data.email + "','" + user_data.question1 + "','" + user_data.answer1 + "','" + user_data.question2 + "','" + user_data.answer2 + "' )")
         .then(function (result) {
+            
             let categoriesPromises = []
             for (index = 0; index < req.body.categories.length; index++) {
                 categoriesPromises.push(DButilsAzure.execQuery("INSERT INTO UsersCategories (UserId,CategoryId) VALUES ('" + user_data.username + "'," + user_data.categories[index] + ")"))
@@ -90,7 +91,7 @@ router.post('/registerClient', function (req, res) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            res.send(err)
+            res.status(400).send(err)
         })
 })
 

@@ -14,7 +14,7 @@ router.get('/getCountries', function(req, res){
         res.status(200).send(result)
     })
     .catch(function(err){
-        res.send(err)
+        res.status(400).send(err)
     })
 })
 

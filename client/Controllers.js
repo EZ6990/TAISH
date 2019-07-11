@@ -83,8 +83,8 @@ app.controller('mainController', ['UserService', '$scope', function (UserService
 }]);
 //-------------------------------------------------------------------------------------------------------------------
 
-app.controller('registerController', ['questionServirce', '$http',
-    function (questionServirce, $http) {
+app.controller('registerController', ['questionServirce', '$http','$window','$location',
+    function (questionServirce, $http,$window,$location) {
         let self = this;
         let basicUrl = 'http://127.0.0.1:3000/public/';
         let cUrl = basicUrl + 'getCountries';
@@ -132,10 +132,10 @@ app.controller('registerController', ['questionServirce', '$http',
                     categories: self.sendCat
                 }
             }
-            $http(req).then(function (result) {
+            $http(req).then(function (result) {               
                 self.sendCat = [];
                 $window.alert('Registration successful');
-                $location.path('/userHome');
+                $location.path('/');
             }).catch(function (err) {
                 return Promise.reject(err);
 
@@ -167,7 +167,7 @@ app.controller('loginController', ['UserService', 'questionServirce', '$location
                 self.recievedPasst = true;
                 self.restoredPass = result.data;
             }).catch(function (err) {
-                res.send(err)
+                return err;
             })
         }
         self.showHide = function () {
