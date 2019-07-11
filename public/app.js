@@ -729,6 +729,9 @@ app.config(['$routeProvider', function ($routeProvider) {
         .when("/favorites", {
             templateUrl: "public/views/favorite.html",
         })
+        .when("/about", {
+            templateUrl: "public/views/about.html",
+        })
         .otherwise({
             redirect: '/',
         });
