@@ -28,7 +28,6 @@ router.post("/login", (req, res) => {
         }
     })
     .catch(function(err){
-        console.log(err)
         res.send(err)
     })
 });
@@ -41,16 +40,12 @@ router.post('/restorePassword', function (req, res) {
         question2: req.body.question2,
         answer2: req.body.answer2
     };
-    console.log(user_data);
-    console.log(1);
     DButilsAzure.execQuery("SELECT Password FROM Users where Username = '" + user_data.username + "' and SecurityQuestion1 = '" + user_data.question1 + "' and SecurityAnswer1 = '" + user_data.answer1 + "'"
     + " and SecurityQuestion2 = '" + user_data.question2 + "' and SecurityAnswer2 = '" + user_data.answer2 + "'")
         .then(function (result) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            console.log(err);
-            console.log(2);
             res.send(err)
         })
 })
@@ -87,10 +82,7 @@ router.post('/registerClient', function (req, res) {
                     let delusercategories = DButilsAzure.execQuery("DELETE FROM UsersCategories WHERE UserId = '" + user_data.username + "'")
                     let deluser = DButilsAzure.execQuery("DELETE FROM Users WHERE Username = '" + user_data.username + "'")
                     Promise.all([delusercategories, deluser]).then(function (data) {
-                        console.log("success delete Category")
-                        console.log("success delete user")
                     })
-                    console.log("error1 : " + data)
                 }
             })
         })
@@ -98,13 +90,6 @@ router.post('/registerClient', function (req, res) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            console.log(err)
-            // DButilsAzure.execQuery("DELETE FROM UsersCategories WHERE UserId = '" +user_data.username+"'").then(function(data){
-            //     console.log("success delete user categories")
-            // })
-            // DButilsAzure.execQuery("DELETE FROM Users WHERE Username = '" +user_data.username+"'").then(function(data){
-            //     console.log("success delete user")
-            // })
             res.send(err)
         })
 })

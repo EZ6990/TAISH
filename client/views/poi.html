@@ -8,6 +8,8 @@
             </div>
             <span class="align-self-left">{{ poiCtrl.poiReviews.length }} reviews</span>
             <span class="align-self-left mx-2 px-2">|</span>
+            <span class="align-self-left">{{ poiCtrl.pointOfInterest.point_viewed}} views</span>
+            <span class="align-self-left mx-2 px-2">|</span>
             <span class="align-self-left" ng-repeat="category in poiCtrl.pointOfInterest.Categories">{{ category.Name }}</span>
         </div>        
         <div class="d-flex flex-row">
@@ -27,7 +29,7 @@
                 <!-- The slideshow -->
                 <div class="carousel-inner">
                     <div class="carousel-item" ng-class="{'active' : $first}" ng-repeat="review in poiCtrl.poiReviews">
-                        <p class="text-center">{{review.Details}}</p>
+                        <p class="text-center">{{review.Details}} {{review.dateOfReview}}</p>
                     </div>
                 </div>
                 <!-- Left and right controls -->

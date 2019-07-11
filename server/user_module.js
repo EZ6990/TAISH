@@ -10,23 +10,17 @@ router.put('/insertDefaultPOIOrder', function (req, res) {
     // })
     let i = 1;
     for (let i = 0; i < req.body.POIId.length; i++) {
-        console.log("here");
         DButilsAzure.execQuery("UPDATE FavoritePointsOfInterest SET Priorety = " + (i + 1) + " WHERE UserId= '" + req.decoded.username + "' AND PointOfInterestId= " + req.body.POIId[i])
             .then(function (result) {
-                console.log("UPDATE FavoritePointsOfInterest SET Priorety = " + (i + 1) + " WHERE UserId= '" + req.deco + "' AND PointOfInterestId= " + req.body.POIId[i - 1]);
                 i++;
             })
             .catch(function (err) {
-                console.log(err)
                 res.send(err)
             })
     }
     res.sendStatus(200);
 
-    // .catch(function(err){
-    //     console.log(err)
-    //     res.send(err)
-    // })
+
 });
 
 router.post('/insertReview', function (req, res, next) {
@@ -36,7 +30,6 @@ router.post('/insertReview', function (req, res, next) {
             next();
         })
         .catch(function (err) {
-            console.log(err)
             res.send(err)
         })
 
@@ -50,7 +43,6 @@ router.post('/insertReview', function (req, res) {
                     res.sendStatus(200)
                 })
                 .catch(function (err) {
-                    console.log(err)
                     res.send(err)
                 })
         })
@@ -65,12 +57,10 @@ router.post('/savePOI', function (req, res) {
                     res.sendStatus(200)
                 })
                 .catch(function (err) {
-                    console.log(err)
                     res.send(err)
                 })
         })
         .catch(function (err) {
-            console.log(err)
             res.send(err)
         })
 });
@@ -88,7 +78,6 @@ router.delete('/removeSavedPOI', function (req, res) {
             res.sendStatus(200)
         })
         .catch(function (err) {
-            console.log(err)
             res.send(err)
         })
 
@@ -121,13 +110,11 @@ router.get('/getReccomendedPOI', function (req, res) {
             })
         })
         .catch(function (err) {
-            console.log("error1 : " + err)
             res.send(err)
         })
 })
 
 router.get('/getSavedPOI', function (req, res) {
-    console.log(req.decoded);
     const user_data = {
         username: req.decoded.username,
     };
@@ -150,7 +137,6 @@ router.get('/getSavedPOI', function (req, res) {
             })
         })
         .catch(function (err) {
-            console.log("error1 : " + err)
             res.send(err)
         })
 })

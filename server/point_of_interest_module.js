@@ -27,7 +27,6 @@ router.get('/getALLPOI', function (req, res) {
                 res.send(FavoritePointOfInterest);
             })
                 .catch(function (err) {
-                    console.log(err)
                     res.send(err)
                 })
         })
@@ -39,20 +38,16 @@ router.put('/POIViewIncrease', function (req, res) {
             res.sendStatus(200)
         })
         .catch(function (err) {
-            console.log(err)
             res.send(err)
         })
 })
 
 router.get('/getPOI/:POIId', function (req, res) {
-    console.log("SELECT * FROM PointsOfInterest WHERE Id = " + req.params.POIId);
     DButilsAzure.execQuery("SELECT * FROM PointsOfInterest WHERE Id = " + req.params.POIId)
         .then(function (result) {
             let allpromisess = []
             for (index = 0; index < result.length; index++) {
-                console.log(result[index])
                 let row = result[index];
-                console.log("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['Id']);
                 allpromisess.push(row)
                 allpromisess.push(DButilsAzure.execQuery("SELECT c.Id,c.Name,c.Description FROM PointsOfInterestCategories pc JOIN Categories c ON (pc.CategoryId = c.Id) WHERE pc.PointOfIntrestId = " + row['Id']))
             }
@@ -67,7 +62,6 @@ router.get('/getPOI/:POIId', function (req, res) {
             })
         })
         .catch(function (err) {
-            console.log(err)
             res.send(err)
         })
 
@@ -84,7 +78,6 @@ router.get('/getPOIReviews/:POIId/:integer', function (req, res) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            console.log(err)
             res.send(err)
         })
 });
@@ -95,7 +88,6 @@ router.get('/getAllCategories', function (req, res) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            console.log(err)
             res.send(err)
         })
 });
