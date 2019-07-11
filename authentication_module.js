@@ -12,7 +12,6 @@ router.use("/",(req,res,next) => {
 });
 
 router.post("/login", (req, res) => {
-    console.log("walid is HERE");
     const user_data = {
         username: req.body.username,
         password: req.body.password,
@@ -43,13 +42,15 @@ router.post('/restorePassword', function (req, res) {
         answer2: req.body.answer2
     };
     console.log(user_data);
+    console.log(1);
     DButilsAzure.execQuery("SELECT Password FROM Users where Username = '" + user_data.username + "' and SecurityQuestion1 = '" + user_data.question1 + "' and SecurityAnswer1 = '" + user_data.answer1 + "'"
     + " and SecurityQuestion2 = '" + user_data.question2 + "' and SecurityAnswer2 = '" + user_data.answer2 + "'")
         .then(function (result) {
             res.status(200).send(result)
         })
         .catch(function (err) {
-            console.log(err)
+            console.log(err);
+            console.log(2);
             res.send(err)
         })
 })
